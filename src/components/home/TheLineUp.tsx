@@ -51,7 +51,7 @@ const item: Variants = {
 
 export default function TheLineUp() {
   return (
-    <section id="lineup" className="relative bg-[#0a0a0a] h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden py-8 snap-start">
+    <section id="lineup" className="relative bg-[#0a0a0a] h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
 
       {/* ── Starfield warp ── */}
       <StarfieldCanvas opacity={0.45} />
@@ -105,16 +105,21 @@ export default function TheLineUp() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 mb-4 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
+              {/* Desktop: label above heading */}
               <motion.p
                 variants={item}
-                className="text-xs font-semibold tracking-[0.25em] uppercase text-[#00e676] mb-3"
+                className="hidden sm:block text-xs font-semibold tracking-[0.25em] uppercase text-[#00e676] mb-3"
               >
                 Upcoming Trips
               </motion.p>
               <motion.h2
                 variants={item}
-                className="text-5xl sm:text-6xl font-black text-white leading-none tracking-tight"
+                className="flex items-baseline gap-3 sm:block text-3xl sm:text-6xl font-black text-white leading-none tracking-tight"
               >
+                {/* Mobile: "Upcoming Trips" sits inline beside heading */}
+                <span className="sm:hidden text-xs font-semibold tracking-[0.25em] uppercase text-[#00e676] self-center">
+                  Upcoming Trips
+                </span>
                 The{" "}
                 <span className="italic text-[#ff6b35]">LineUp</span>
               </motion.h2>
@@ -141,7 +146,7 @@ export default function TheLineUp() {
         {/* ── Bottom CTA ── */}
         <motion.div
           variants={item}
-          className="relative max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-12 flex justify-center"
+          className="hidden sm:flex relative max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-12 justify-center"
         >
           <a
             href="/trips"
