@@ -51,7 +51,7 @@ const item: Variants = {
 
 export default function TheLineUp() {
   return (
-    <section id="lineup" className="relative bg-[#0a0a0a] py-20 sm:py-28 overflow-hidden">
+    <section id="lineup" className="relative bg-[#0a0a0a] h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden py-8 snap-start">
 
       {/* ── Starfield warp ── */}
       <StarfieldCanvas opacity={0.45} />
@@ -102,7 +102,7 @@ export default function TheLineUp() {
         viewport={{ once: true, amount: 0.35 }}
       >
         {/* ── Section header ── */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 mb-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 mb-4 sm:mb-12">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div>
               <motion.p
@@ -120,7 +120,7 @@ export default function TheLineUp() {
               </motion.h2>
             </div>
 
-            <motion.div variants={item} className="sm:text-right max-w-xs">
+            <motion.div variants={item} className="hidden sm:block sm:text-right max-w-xs">
               <p className="text-base font-bold text-white leading-snug">
                 Right place.{" "}
                 <span className="text-[#ff6b35] italic">Right time.</span>
@@ -141,7 +141,7 @@ export default function TheLineUp() {
         {/* ── Bottom CTA ── */}
         <motion.div
           variants={item}
-          className="relative max-w-7xl mx-auto px-4 sm:px-6 mt-12 flex justify-center"
+          className="relative max-w-7xl mx-auto px-4 sm:px-6 mt-4 sm:mt-12 flex justify-center"
         >
           <a
             href="/trips"

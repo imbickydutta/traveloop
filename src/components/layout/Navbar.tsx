@@ -18,12 +18,17 @@ export default function Navbar() {
   const [brandVisible, setBrandVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 60);
-      setBrandVisible(window.scrollY > 10);
+    const onScroll = (e: Event) => {
+      const el = e.target as Element;
+      const scrollY =
+        el === document.documentElement || el === document.body || el === document
+          ? window.scrollY
+          : el.scrollTop;
+      setScrolled(scrollY > 60);
+      setBrandVisible(scrollY > 10);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
   }, []);
 
   // Lock body scroll when mobile menu is open

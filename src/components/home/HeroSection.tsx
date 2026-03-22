@@ -60,7 +60,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <div className="relative h-screen w-full flex flex-col overflow-hidden">
+    <div className="relative h-screen w-full flex flex-col overflow-hidden snap-start">
       {/* ── Crossfading background images — render all, show active ── */}
       {HERO_IMAGES.map((src, i) => (
         <motion.div

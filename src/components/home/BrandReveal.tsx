@@ -71,13 +71,20 @@ export default function BrandReveal({ hidden = false }: { hidden?: boolean }) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  /* ── toggle gone based on scroll position ── */
+  /* ── toggle gone based on scroll position ──
+     Uses capture so it fires even when a child element (e.g. <main>
+     with snap scroll) is the actual scroll container, not window. ── */
   useEffect(() => {
-    const onScroll = () => {
-      setGone(window.scrollY > 10);
+    const onScroll = (e: Event) => {
+      const el = e.target as Element;
+      const scrollY =
+        el === document.documentElement || el === document.body || el === document
+          ? window.scrollY
+          : el.scrollTop;
+      setGone(scrollY > 10);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    document.addEventListener("scroll", onScroll, { passive: true, capture: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
   }, []);
 
   if (!ready) return null;
