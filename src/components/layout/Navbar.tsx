@@ -19,11 +19,11 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = (e: Event) => {
-      const el = e.target as Element;
+      const t = e.target;
       const scrollY =
-        el === document.documentElement || el === document.body || el === document
-          ? window.scrollY
-          : el.scrollTop;
+        t instanceof Element && t !== document.documentElement && t !== document.body
+          ? t.scrollTop
+          : window.scrollY;
       setScrolled(scrollY > 60);
       setBrandVisible(scrollY > 10);
     };
