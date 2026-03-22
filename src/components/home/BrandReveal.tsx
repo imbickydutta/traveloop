@@ -76,11 +76,11 @@ export default function BrandReveal({ hidden = false }: { hidden?: boolean }) {
      with snap scroll) is the actual scroll container, not window. ── */
   useEffect(() => {
     const onScroll = (e: Event) => {
-      const el = e.target as Element;
+      const t = e.target;
       const scrollY =
-        el === document.documentElement || el === document.body || el === document
-          ? window.scrollY
-          : el.scrollTop;
+        t instanceof Element && t !== document.documentElement && t !== document.body
+          ? t.scrollTop
+          : window.scrollY;
       setGone(scrollY > 10);
     };
     document.addEventListener("scroll", onScroll, { passive: true, capture: true });
