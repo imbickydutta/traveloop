@@ -60,7 +60,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col overflow-hidden">
+    <div className="relative h-screen w-full flex flex-col overflow-hidden">
       {/* ── Crossfading background images — render all, show active ── */}
       {HERO_IMAGES.map((src, i) => (
         <motion.div
@@ -84,7 +84,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
 
       {/* Main content — pushed down to sit below the BrandReveal name */}
-      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[160px] sm:pt-[240px] md:pt-[260px]">
+      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[155px] sm:pt-[200px] md:pt-[220px]">
 
         {/* Product description */}
         <motion.p
@@ -150,7 +150,7 @@ export default function HeroSection() {
 
         {/* CTAs — mt-auto absorbs all remaining space, anchoring buttons near the bottom */}
         <motion.div
-          className="mt-auto flex flex-col sm:flex-row items-center gap-4 mb-14 sm:mb-16"
+          className="mt-auto flex flex-col sm:flex-row items-center gap-4 mb-8 sm:mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
