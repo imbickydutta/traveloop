@@ -41,11 +41,9 @@ export default function Navbar() {
       <motion.header
         className="fixed top-0 left-0 right-0 z-[65]"
         style={{
-          background:           scrolled ? "rgba(10,10,10,0.28)" : "rgba(10,10,10,0.05)",
-          backdropFilter:       "blur(24px) saturate(180%)",
-          WebkitBackdropFilter: "blur(24px) saturate(180%)",
-          borderBottom:         scrolled ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(255,255,255,0.03)",
-          transition:           "background 0.4s ease, border-color 0.4s ease",
+          background:           "transparent",
+          borderBottom:         "none",
+          transition:           "none",
         }}
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
