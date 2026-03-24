@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, type MotionValue } from "framer-motion
 import Image from "next/image";
 
 const ACCENT  = "#f5a623";
-const SCROLL_PER_CARD = 90; // vh of scroll space per card
+const SCROLL_PER_CARD = 120; // vh of scroll space per card
 
 /* Per-card resting tilt — alternates so the stack fans naturally */
 const TILTS = [0, -4, 3, -5, 3.5, -3, 4.5, -3.5, 2.5];
@@ -49,10 +49,8 @@ function BgImage({ src, index, activeIndex }: { src: string; index: number; acti
   );
   const scale = useTransform(activeIndex, [index - 1, index, index + 1], [1.06, 1.12, 1.06]);
   return (
-    <motion.div className="absolute inset-0" style={{ opacity }}>
-      <motion.div className="absolute inset-0" style={{ scale }}>
-        <Image src={src} alt="" fill sizes="100vw" className="object-cover" style={{ filter: "blur(28px)" }} priority={index === 0} />
-      </motion.div>
+    <motion.div className="absolute inset-0" style={{ opacity, scale }}>
+      <Image src={src} alt="" fill sizes="100vw" className="object-cover" style={{ filter: "blur(28px)" }} priority={index === 0} />
     </motion.div>
   );
 }
@@ -119,14 +117,6 @@ function StackCard({
   /* z-index is CONSTANT — each card always sits above earlier cards */
   const zIndex = index + 1;
 
-  /* Blurred background crossfade opacity on THIS card's image layer */
-  const bgOpacity = useTransform(activeIndex, (a) => {
-    const pos = index - a;
-    if (pos > 0.2 || pos < -0.6) return 0;
-    if (pos > 0) return 1 - pos / 0.2;
-    return 1 + pos / 0.6;
-  });
-
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center"
@@ -162,25 +152,24 @@ function StackCard({
               : "linear-gradient(260deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 55%, transparent 80%)",
           }}
         />
-        {/* Bottom scrim for the glass footer */}
-        <div className="absolute bottom-0 inset-x-0 h-[55%]"
-          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%)" }} />
+        {/* Bottom scrim — tall and deep for strong text contrast */}
+        <div className="absolute bottom-0 inset-x-0 h-[70%]"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.55) 55%, transparent 100%)" }} />
 
         {/* ── TOP: Day number + date ──────────────────── */}
         <div className={`absolute top-5 ${isLeft ? "left-5" : "right-5"} flex flex-col ${isLeft ? "items-start" : "items-end"}`}>
-          {/* Day number in elegant large numeral */}
           <span
             className="font-black leading-none tracking-tighter"
-            style={{ fontSize: "clamp(2.2rem, 7vh, 3.5rem)", color: ACCENT, opacity: 0.95 }}
+            style={{ fontSize: "clamp(2.8rem, 9vh, 4.5rem)", color: ACCENT }}
           >
             {String(day.day).padStart(2, "0")}
           </span>
-          <span className="text-[9px] font-semibold tracking-[0.3em] uppercase text-white/40 mt-0.5">
+          <span className="text-[12px] font-bold tracking-[0.28em] uppercase mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>
             {day.date}
           </span>
         </div>
 
-        {/* Thin amber rule — runs across the card width at the accent edge */}
+        {/* Thin amber rule */}
         <div
           className="absolute top-0 bottom-0 w-px"
           style={{
@@ -189,22 +178,21 @@ function StackCard({
           }}
         />
 
-        {/* ── BOTTOM: frosted glass text panel ─────── */}
-        <div
-          className={`absolute bottom-0 left-0 right-0 px-5 pb-5 pt-10 ${isLeft ? "" : "text-right"}`}
-          style={{
-            backdropFilter: "blur(0px)", // pure gradient, no blur (blur causes perf issues on stacked cards)
-          }}
-        >
+        {/* ── BOTTOM: text panel ─────── */}
+        <div className={`absolute bottom-0 left-0 right-0 px-5 pb-6 pt-10 ${isLeft ? "" : "text-right"}`}>
+
           {/* Location */}
-          <p className="text-[9px] font-semibold tracking-[0.32em] uppercase text-white/35 mb-2">
+          <p className="text-[12px] font-bold tracking-[0.25em] uppercase mb-2.5" style={{ color: "rgba(255,255,255,0.65)" }}>
             {day.location}
           </p>
 
           {/* Title */}
           <h3
             className="font-black leading-[1.1] text-white mb-3"
-            style={{ fontSize: "clamp(1.15rem, 3.5vh, 1.5rem)" }}
+            style={{
+              fontSize: "clamp(1.5rem, 5vh, 2rem)",
+              textShadow: "0 2px 16px rgba(0,0,0,0.7)",
+            }}
           >
             {day.title.split(" ").slice(0, -1).join(" ")}{" "}
             <span style={{ color: ACCENT }} className="italic">
@@ -212,14 +200,15 @@ function StackCard({
             </span>
           </h3>
 
-          {/* Thin divider */}
-          <div className="mb-3 h-px w-10" style={{ background: `${ACCENT}55`, marginLeft: isLeft ? 0 : "auto" }} />
+          {/* Divider */}
+          <div className="mb-4 h-px w-12" style={{ background: `${ACCENT}80`, marginLeft: isLeft ? 0 : "auto" }} />
 
           {/* Bullets */}
-          <ul className={`space-y-1.5 ${isLeft ? "" : "flex flex-col items-end"}`}>
+          <ul className={`space-y-2.5 ${isLeft ? "" : "flex flex-col items-end"}`}>
             {day.bullets.map((b, j) => (
-              <li key={j} className={`flex items-start gap-2 text-[11px] text-white/50 ${isLeft ? "" : "flex-row-reverse"}`}>
-                <span className="mt-[3px] w-[5px] h-[5px] rounded-full flex-shrink-0" style={{ background: ACCENT }} />
+              <li key={j} className={`flex items-center gap-3 text-[13px] font-medium ${isLeft ? "" : "flex-row-reverse"}`}
+                style={{ color: "rgba(255,255,255,0.88)", textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}>
+                <span className="w-[6px] h-[6px] rounded-full flex-shrink-0" style={{ background: ACCENT }} />
                 <span className="leading-snug">{b}</span>
               </li>
             ))}
@@ -267,7 +256,7 @@ export default function KenyaScrollJourney() {
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
       <div
         className="sticky top-0 h-screen overflow-hidden"
-        style={{ perspective: "1000px", perspectiveOrigin: "50% 55%", contain: "paint layout", willChange: "transform" }}
+        style={{ contain: "paint layout" }}
       >
         {/* Blurred scene background */}
         <div className="absolute inset-0 bg-[#060606]">
