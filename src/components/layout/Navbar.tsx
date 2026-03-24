@@ -182,6 +182,7 @@ export default function Navbar() {
                 WhatsApp Us
               </a>
             </motion.div>
+
           </motion.div>
         )}
       </AnimatePresence>
