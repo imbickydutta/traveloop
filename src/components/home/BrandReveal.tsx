@@ -22,26 +22,42 @@ function getNavLogoLeft(vw: number): number {
   return vw > maxW ? Math.floor((vw - maxW) / 2) + pad : pad;
 }
 
-/* ── Blinking 'oo' ── */
+/* ── Traveling beam ∞
+   One closed figure-eight stroke: centre → right loop → centre → left loop.
+─────────────────────────────────────────────────────────── */
+const INF_STROKE =
+  "M12 12 C14 7,20.5 7,20.5 12 C20.5 17,14 17,12 12 C10 7,3.5 7,3.5 12 C3.5 17,10 17,12 12Z";
+
+const PATH_LEN = 58;   // approximate total length in viewBox units
+const BEAM_LEN = 8;    // length of the traveling bright dash
+
 export function BlinkingOo({ subtle = false }: { subtle?: boolean }) {
-  const dim = subtle ? 0.5 : 0.07;
+  const GREEN = "#00e676";
+
   return (
-    <>
-      <motion.span
-        className="text-[#00e676]"
-        animate={{ opacity: [1, dim, 1] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-      >
-        o
-      </motion.span>
-      <motion.span
-        className="text-[#00e676]"
-        animate={{ opacity: [1, dim, 1] }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut", delay: 0.3 }}
-      >
-        o
-      </motion.span>
-    </>
+    <svg
+      width="1.3em" height="0.72em" viewBox="2.5 6.5 19 11"
+      fill="none" aria-hidden="true"
+      style={{ display: "inline-block", verticalAlign: "middle" }}
+    >
+      {/* Dim base — full shape always visible */}
+      <path
+        d={INF_STROKE}
+        stroke={GREEN} strokeWidth="1.8" strokeOpacity={subtle ? 0.25 : 0.2}
+        strokeLinecap="round"
+      />
+
+      {/* Traveling beam */}
+      <motion.path
+        d={INF_STROKE}
+        stroke={GREEN} strokeWidth="1.8"
+        strokeLinecap="round"
+        style={{ filter: `drop-shadow(0 0 3px ${GREEN})` }}
+        strokeDasharray={`${BEAM_LEN} ${PATH_LEN - BEAM_LEN}`}
+        animate={{ strokeDashoffset: [0, -PATH_LEN] }}
+        transition={{ duration: subtle ? 3 : 2, repeat: Infinity, ease: "linear" }}
+      />
+    </svg>
   );
 }
 
