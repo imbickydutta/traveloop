@@ -104,14 +104,13 @@ function StackCard({
     return 1.0;
   });
 
-  /* Opacity: invisible far away; clear while peeking; solid in stack */
+  /* Opacity: hidden far away, solid once visible — no blending during slide-up */
   const opacity = useTransform(activeIndex, (a) => {
     const pos   = index - a;
-    const depth = -pos;           // how deep in the stack (0 = top)
-    if (pos >  1.2) return 0;
-    if (pos >  0)   return Math.max(0, 1 - pos * 0.6);
-    if (depth > 5)  return Math.max(0, 1 - (depth - 5) * 0.4); // fade very old cards
-    return 1;
+    const depth = -pos;
+    if (pos >  1.2) return 0;   // far off-screen: skip compositing entirely
+    if (depth > 5)  return Math.max(0, 1 - (depth - 5) * 0.4); // fade buried cards
+    return 1;                   // solid — no alpha blend needed
   });
 
   /* z-index is CONSTANT — each card always sits above earlier cards */
