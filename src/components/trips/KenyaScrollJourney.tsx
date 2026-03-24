@@ -51,7 +51,7 @@ function BgImage({ src, index, activeIndex }: { src: string; index: number; acti
   return (
     <motion.div className="absolute inset-0" style={{ opacity }}>
       <motion.div className="absolute inset-0" style={{ scale }}>
-        <Image src={src} alt="" fill sizes="100vw" className="object-cover" style={{ filter: "blur(52px)" }} priority={index === 0} />
+        <Image src={src} alt="" fill sizes="100vw" className="object-cover" style={{ filter: "blur(28px)" }} priority={index === 0} />
       </motion.div>
     </motion.div>
   );
@@ -141,7 +141,8 @@ function StackCard({
           scale,
           opacity,
           /* Shadow intensifies with the amber glow — feels luxurious */
-          boxShadow: `
+          willChange: "transform",
+        boxShadow: `
             0 40px 90px rgba(0,0,0,0.75),
             0 12px 28px rgba(0,0,0,0.55),
             0 0 0 1px rgba(255,255,255,0.06)
@@ -266,7 +267,7 @@ export default function KenyaScrollJourney() {
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
       <div
         className="sticky top-0 h-screen overflow-hidden"
-        style={{ perspective: "1000px", perspectiveOrigin: "50% 55%" }}
+        style={{ perspective: "1000px", perspectiveOrigin: "50% 55%", contain: "paint layout", willChange: "transform" }}
       >
         {/* Blurred scene background */}
         <div className="absolute inset-0 bg-[#060606]">

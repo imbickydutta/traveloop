@@ -72,17 +72,19 @@ function RouteMarquee() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
-      } else {
+    // Pause only when the browser tab is hidden — simpler and reliable
+    const onVisibility = () => {
+      if (document.hidden) {
         if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
+      } else {
+        if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
       }
-    });
-    observer.observe(track);
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
