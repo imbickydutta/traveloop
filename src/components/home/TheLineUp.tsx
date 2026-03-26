@@ -51,13 +51,17 @@ const item: Variants = {
 
 export default function TheLineUp() {
   return (
-    <section id="lineup" className="relative bg-[#0a0a0a] h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
+    <section id="lineup" className="relative h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
 
-      {/* ── Starfield warp ── */}
-      <StarfieldCanvas opacity={0.45} />
+      {/* ── Fixed background — persists into featured trips as you scroll ── */}
+      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1 }} aria-hidden>
+        {/* Dark base */}
+        <div className="absolute inset-0 bg-[#0a0a0a]" />
 
-      {/* ── Background orbs ── */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
+        {/* Starfield warp */}
+        <StarfieldCanvas opacity={0.45} />
+
+        {/* Ambient orbs */}
         {ORBS.map((orb, i) => (
           <motion.div
             key={i}
@@ -83,7 +87,7 @@ export default function TheLineUp() {
           />
         ))}
 
-        {/* Subtle noise grain overlay — breaks up the flat black */}
+        {/* Subtle noise grain overlay */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
