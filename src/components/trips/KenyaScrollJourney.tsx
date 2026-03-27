@@ -141,7 +141,7 @@ function StackCard({
             ))}
           </ul>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
