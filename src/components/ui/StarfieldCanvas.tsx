@@ -26,10 +26,8 @@ function makeStar(w: number, h: number, z?: number): Star {
   };
 }
 
-export default function StarfieldCanvas({ opacity = 0.55, paused = false }: { opacity?: number; paused?: boolean }) {
+export default function StarfieldCanvas({ opacity = 0.55 }: { opacity?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -46,10 +44,6 @@ export default function StarfieldCanvas({ opacity = 0.55, paused = false }: { op
     let raf: number;
 
     const draw = () => {
-      if (pausedRef.current) {
-        raf = requestAnimationFrame(draw);
-        return;
-      }
       // Soft trail — low alpha fill keeps streaks but fades old ones
       ctx.fillStyle = "rgba(10,10,10,0.18)";
       ctx.fillRect(0, 0, w, h);

@@ -195,17 +195,9 @@ export default function KenyaScrollJourney() {
 
   // Track active index as a plain number for windowing + willChange gating
   const [activeValue, setActiveValue] = useState(0);
-  // Pause starfield while scrolling — only on low-end devices
-  const [starPaused, setStarPaused] = useState(false);
-  const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useMotionValueEvent(activeIndex, "change", (v) => {
     setActiveValue(Math.round(v));
-    if (isMobile) {
-      setStarPaused(true);
-      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
-      pauseTimerRef.current = setTimeout(() => setStarPaused(false), 300);
-    }
   });
 
   return (
@@ -221,7 +213,7 @@ export default function KenyaScrollJourney() {
             #0a0a0a
           `
         }}>
-          <StarfieldCanvas opacity={0.45} paused={starPaused} />
+          {!isMobile && <StarfieldCanvas opacity={0.45} />}
 
           {/* Noise grain */}
           <div className="absolute inset-0 opacity-[0.03]" style={{
