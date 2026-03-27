@@ -220,18 +220,20 @@ function TripCard({
                 style={{ color: "rgba(255,255,255,0.3)" }}>
                 Trip Price
               </p>
-              <p className="font-black leading-none" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: accent }}>
-                {formatINR(displayPrice)}
-              </p>
-              {(trip.earlyBirdPercent ?? 0) > 0 && (
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-white/30 line-through text-sm">{formatINR(trip.pricePerPaxINR)}</span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                    style={{ color: accent, background: `${accent}18`, border: `1px solid ${accent}30` }}>
-                    -{trip.earlyBirdPercent}%
-                  </span>
-                </div>
-              )}
+              <div className="flex items-baseline gap-3">
+                <p className="font-black leading-none" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: accent }}>
+                  {formatINR(displayPrice)}
+                </p>
+                {(trip.earlyBirdPercent ?? 0) > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-white/30 line-through text-xs">{formatINR(trip.pricePerPaxINR)}</span>
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                      style={{ color: accent, background: `${accent}18`, border: `1px solid ${accent}30` }}>
+                      -{trip.earlyBirdPercent}%
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
