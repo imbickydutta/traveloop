@@ -1,9 +1,21 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent, type MotionValue } from "framer-motion";
 import Image from "next/image";
 import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
+
+/* How many cards away from active to keep mounted (each side) */
+const RENDER_WINDOW = 3;
+
+/* Pause starfield on any mobile screen — no phone has a desktop-class GPU */
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    setMobile(window.matchMedia("(max-width: 768px)").matches);
+  }, []);
+  return mobile;
+}
 
 const ACCENT  = "#f5a623";
 const SCROLL_PER_CARD = 80; // vh of scroll space per card
@@ -43,13 +55,16 @@ const DAYS = [
 
 /* ── Stack card ── */
 function StackCard({
-  day, index, activeIndex,
+  day, index, activeIndex, activeValue,
 }: {
   day: (typeof DAYS)[number];
   index: number;
   activeIndex: MotionValue<number>;
+  activeValue: number;
 }) {
   const isLeft = day.side === "left";
+  // Only promote to GPU layer when within 2 cards of active — saves compositing budget
+  const isNear = Math.abs(index - activeValue) <= 2;
 
   const y = useTransform(activeIndex, (a) => {
     const pos = index - a;
@@ -87,7 +102,7 @@ function StackCard({
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center"
-      style={{ transform, opacity, zIndex: index + 1, willChange: "transform" }}
+      style={{ transform, opacity, zIndex: index + 1, willChange: isNear ? "transform" : "auto" }}
     >
       <div
         className="relative rounded-2xl overflow-hidden w-[calc(85vw-27px)] sm:w-[500px] h-[49vh] sm:h-[58vh]"
@@ -176,9 +191,26 @@ export default function KenyaScrollJourney() {
   const { scrollYProgress } = useScroll({ target: containerRef });
   const activeIndex = useTransform(scrollYProgress, [0, 1], [0, DAYS.length - 0.001]);
 
+  const isMobile = useIsMobile();
+
+  // Track active index as a plain number for windowing + willChange gating
+  const [activeValue, setActiveValue] = useState(0);
+  // Pause starfield while scrolling — only on low-end devices
+  const [starPaused, setStarPaused] = useState(false);
+  const pauseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useMotionValueEvent(activeIndex, "change", (v) => {
+    setActiveValue(Math.round(v));
+    if (isMobile) {
+      setStarPaused(true);
+      if (pauseTimerRef.current) clearTimeout(pauseTimerRef.current);
+      pauseTimerRef.current = setTimeout(() => setStarPaused(false), 300);
+    }
+  });
+
   return (
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "paint layout", willChange: "transform", transform: "translateZ(0)" }}>
+      <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "strict", willChange: "transform", transform: "translateZ(0)" }}>
 
         {/* Background — static gradient orbs (no animation = no GPU cost) + starfield */}
         <div className="absolute inset-0 pointer-events-none" style={{
@@ -189,7 +221,7 @@ export default function KenyaScrollJourney() {
             #0a0a0a
           `
         }}>
-          <StarfieldCanvas opacity={0.45} />
+          <StarfieldCanvas opacity={0.45} paused={starPaused} />
 
           {/* Noise grain */}
           <div className="absolute inset-0 opacity-[0.03]" style={{
@@ -208,11 +240,14 @@ export default function KenyaScrollJourney() {
           </h2>
         </div>
 
-        {/* Card deck */}
+        {/* Card deck — only render cards within the window to reduce DOM + layer count */}
         <div className="absolute inset-0">
-          {DAYS.map((day, i) => (
-            <StackCard key={day.day} day={day} index={i} activeIndex={activeIndex} />
-          ))}
+          {DAYS.map((day, i) => {
+            if (Math.abs(i - activeValue) > RENDER_WINDOW) return null;
+            return (
+              <StackCard key={day.day} day={day} index={i} activeIndex={activeIndex} activeValue={activeValue} />
+            );
+          })}
         </div>
 
         <ProgressBar activeIndex={activeIndex} total={DAYS.length} />
