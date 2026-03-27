@@ -127,22 +127,6 @@ export default function KenyaSafariPage() {
   return (
     <div className="min-h-screen bg-[#060606] text-white">
 
-      {/* ── Ambient orbs ── */}
-      <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden>
-        <motion.div className="absolute rounded-full"
-          animate={{ x:[0,60,-20,40,0], y:[0,-60,40,-30,0] }}
-          transition={{ duration:24, repeat:Infinity, ease:"easeInOut", repeatType:"mirror" }}
-          style={{ width:600, height:600, top:"10%", left:"-8%", background:"#f5a623", opacity:0.07, filter:"blur(130px)" }} />
-        <motion.div className="absolute rounded-full"
-          animate={{ x:[0,-50,30,-20,0], y:[0,70,-40,50,0] }}
-          transition={{ duration:30, repeat:Infinity, ease:"easeInOut", repeatType:"mirror" }}
-          style={{ width:500, height:500, bottom:"15%", right:"-6%", background:"#00e676", opacity:0.05, filter:"blur(120px)" }} />
-        <motion.div className="absolute rounded-full"
-          animate={{ x:[0,40,-60,20,0], y:[0,-50,60,-30,0] }}
-          transition={{ duration:20, repeat:Infinity, ease:"easeInOut", repeatType:"mirror" }}
-          style={{ width:400, height:400, top:"50%", left:"40%", background:"#e07b00", opacity:0.05, filter:"blur(110px)" }} />
-      </div>
-
       <div className="relative z-10">
         <Navbar />
 

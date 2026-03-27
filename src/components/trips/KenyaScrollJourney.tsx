@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, type MotionValue } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "framer-motion";
 import Image from "next/image";
+import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
 
 const ACCENT  = "#f5a623";
 const SCROLL_PER_CARD = 120; // vh of scroll space per card
@@ -40,31 +41,7 @@ const DAYS = [
     bullets: ["Traditional Maasai village visit", "Lavish farewell lunch in Nairobi"] },
 ];
 
-/* ── Blurred background — crossfades between card images ── */
-function BgImage({ src, index, activeIndex }: { src: string; index: number; activeIndex: MotionValue<number> }) {
-  const opacity = useTransform(
-    activeIndex,
-    [index - 0.9, index - 0.3, index, index + 0.3, index + 0.9],
-    [0, 0.7, 1, 0.7, 0]
-  );
-  const scale = useTransform(activeIndex, [index - 1, index, index + 1], [1.06, 1.12, 1.06]);
-  return (
-    <motion.div className="absolute inset-0" style={{ opacity, scale }}>
-      <Image src={src} alt="" fill sizes="100vw" className="object-cover" style={{ filter: "blur(28px)" }} priority={index === 0} />
-    </motion.div>
-  );
-}
-
-/* ─────────────────────────────────────────────────────────────
-   StackCard
-
-   Journey of every card as activeIndex increases:
-   1. Waiting below the screen  (pos > 1)
-   2. Peeking up from the bottom  (pos ≈ 1 → 0.1)
-   3. Sliding onto the stack, straight on top  (pos ≈ 0)
-   4. Tilting into its resting position as the NEXT card arrives  (pos < 0)
-   5. Staying put — never leaves the stack
-──────────────────────────────────────────────────────────────── */
+/* ── Stack card ── */
 function StackCard({
   day, index, activeIndex,
 }: {
@@ -74,7 +51,6 @@ function StackCard({
 }) {
   const isLeft = day.side === "left";
 
-  /* Y: come up from below → land at 0 → never move again */
   const y = useTransform(activeIndex, (a) => {
     const pos = index - a;
     if (pos >  1.2) return "78vh";
@@ -82,38 +58,29 @@ function StackCard({
     return "0vh";
   });
 
-  /*
-    Rotate:
-    • While approaching & on top: 0° (straight, fully readable)
-    • As the NEXT card slides on top: smoothly tilts to TILTS[index]
-    • Stays at that tilt forever
-  */
   const rotate = useTransform(activeIndex, (a) => {
-    const pos = index - a;        // 0 = just landed, negative = buried
-    if (pos > -0.05) return 0;    // on top or arriving: perfectly straight
+    const pos = index - a;
+    if (pos > -0.05) return 0;
     const t = Math.min(1, (Math.abs(pos) - 0.05) / 0.9);
     return TILTS[index] * t;
   });
 
-  /* Brief scale overshoot as card lands — feels snappy and physical */
   const scale = useTransform(activeIndex, (a) => {
     const pos = index - a;
     if (pos >  1)    return 0.86;
-    if (pos >  0)    return 0.86 + (1 - pos) * 0.16; // 0.86 → 1.02
-    if (pos > -0.15) return 1.02 - Math.abs(pos) / 0.15 * 0.02; // 1.02 → 1.0
+    if (pos >  0)    return 0.86 + (1 - pos) * 0.16;
+    if (pos > -0.15) return 1.02 - Math.abs(pos) / 0.15 * 0.02;
     return 1.0;
   });
 
-  /* Opacity: hidden far away, solid once visible — no blending during slide-up */
   const opacity = useTransform(activeIndex, (a) => {
     const pos   = index - a;
     const depth = -pos;
-    if (pos >  1.2) return 0;   // far off-screen: skip compositing entirely
-    if (depth > 5)  return Math.max(0, 1 - (depth - 5) * 0.4); // fade buried cards
-    return 1;                   // solid — no alpha blend needed
+    if (pos >  1.2) return 0;
+    if (depth > 5)  return Math.max(0, 1 - (depth - 5) * 0.4);
+    return 1;
   });
 
-  /* z-index is CONSTANT — each card always sits above earlier cards */
   const zIndex = index + 1;
 
   return (
@@ -122,40 +89,24 @@ function StackCard({
       style={{ y, zIndex }}
     >
       <motion.div
-        className="relative rounded-2xl overflow-hidden"
+        className="relative rounded-2xl overflow-hidden w-[calc(85vw-27px)] sm:w-[500px] h-[49vh] sm:h-[58vh]"
         style={{
-          width: "min(calc(100vw - 32px), 500px)",
-          height: "58vh",
           rotate,
           scale,
           opacity,
-          /* Shadow intensifies with the amber glow — feels luxurious */
           willChange: "transform",
-        boxShadow: `
-            0 40px 90px rgba(0,0,0,0.75),
-            0 12px 28px rgba(0,0,0,0.55),
-            0 0 0 1px rgba(255,255,255,0.06)
-          `,
+          boxShadow: "0 32px 80px rgba(0,0,0,0.85), 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
         {/* Photo */}
-        <Image src={day.image} alt="" fill sizes="(max-width: 768px) calc(100vw - 32px), 500px" className="object-cover object-center" priority={index === 0} />
+        <Image src={day.image} alt="" fill sizes="(max-width: 640px) calc(85vw - 27px), 500px" className="object-cover object-center" priority={index === 0} />
 
-        {/* Darkening layers */}
-        <div className="absolute inset-0 bg-black/40" />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: isLeft
-              ? "linear-gradient(100deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 55%, transparent 80%)"
-              : "linear-gradient(260deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.15) 55%, transparent 80%)",
-          }}
-        />
-        {/* Bottom scrim — tall and deep for strong text contrast */}
+        {/* Bottom scrim only — for text contrast */}
         <div className="absolute bottom-0 inset-x-0 h-[70%]"
           style={{ background: "linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.55) 55%, transparent 100%)" }} />
 
-        {/* ── TOP: Day number + date ──────────────────── */}
+
+        {/* TOP: Day number + date */}
         <div className={`absolute top-5 ${isLeft ? "left-5" : "right-5"} flex flex-col ${isLeft ? "items-start" : "items-end"}`}>
           <span
             className="font-black leading-none tracking-tighter"
@@ -168,41 +119,21 @@ function StackCard({
           </span>
         </div>
 
-        {/* Thin amber rule */}
-        <div
-          className="absolute top-0 bottom-0 w-px"
-          style={{
-            [isLeft ? "left" : "right"]: "0",
-            background: `linear-gradient(to bottom, transparent 10%, ${ACCENT}90 40%, ${ACCENT}90 60%, transparent 90%)`,
-          }}
-        />
-
-        {/* ── BOTTOM: text panel ─────── */}
+        {/* BOTTOM: text panel */}
         <div className={`absolute bottom-0 left-0 right-0 px-5 pb-6 pt-10 ${isLeft ? "" : "text-right"}`}>
-
-          {/* Location */}
           <p className="text-[12px] font-bold tracking-[0.25em] uppercase mb-2.5" style={{ color: "rgba(255,255,255,0.65)" }}>
             {day.location}
           </p>
-
-          {/* Title */}
           <h3
             className="font-black leading-[1.1] text-white mb-3"
-            style={{
-              fontSize: "clamp(1.5rem, 5vh, 2rem)",
-              textShadow: "0 2px 16px rgba(0,0,0,0.7)",
-            }}
+            style={{ fontSize: "clamp(1.5rem, 5vh, 2rem)", textShadow: "0 2px 16px rgba(0,0,0,0.7)" }}
           >
             {day.title.split(" ").slice(0, -1).join(" ")}{" "}
             <span style={{ color: ACCENT }} className="italic">
               {day.title.split(" ").slice(-1)[0]}
             </span>
           </h3>
-
-          {/* Divider */}
           <div className="mb-4 h-px w-12" style={{ background: `${ACCENT}80`, marginLeft: isLeft ? 0 : "auto" }} />
-
-          {/* Bullets */}
           <ul className={`space-y-2.5 ${isLeft ? "" : "flex flex-col items-end"}`}>
             {day.bullets.map((b, j) => (
               <li key={j} className={`flex items-center gap-3 text-[13px] font-medium ${isLeft ? "" : "flex-row-reverse"}`}
@@ -228,19 +159,16 @@ function ProgressBar({ activeIndex, total }: { activeIndex: MotionValue<number>;
   );
 }
 
-/* ── Pill dots ── */
+/* ── Simple CSS-transition dots — no MotionValues ── */
 function Dots({ activeIndex, total }: { activeIndex: MotionValue<number>; total: number }) {
+  const [current, setCurrent] = useState(0);
+  useMotionValueEvent(activeIndex, "change", (v) => setCurrent(Math.round(v)));
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-[6px] z-[60]">
-      {Array.from({ length: total }).map((_, i) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const w  = useTransform(activeIndex, [i - 0.5, i, i + 0.5], [5, 20, 5]);
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const op = useTransform(activeIndex, [i - 0.5, i, i + 0.5], [0.28, 1, 0.28]);
-        return (
-          <motion.div key={i} className="h-[4px] rounded-full" style={{ width: w, opacity: op, background: ACCENT }} />
-        );
-      })}
+      {Array.from({ length: total }).map((_, i) => (
+        <div key={i} className="h-[4px] rounded-full transition-all duration-300"
+          style={{ width: i === current ? 20 : 5, opacity: i === current ? 1 : 0.28, background: ACCENT }} />
+      ))}
     </div>
   );
 }
@@ -253,16 +181,33 @@ export default function KenyaScrollJourney() {
 
   return (
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
-      <div
-        className="sticky top-0 h-screen overflow-hidden"
-        style={{ contain: "paint layout" }}
-      >
-        {/* Blurred scene background */}
-        <div className="absolute inset-0 bg-[#060606]">
-          {DAYS.map((d, i) => <BgImage key={i} src={d.image} index={i} activeIndex={activeIndex} />)}
-          <div className="absolute inset-0 bg-black/48" />
-          <div className="absolute inset-0" style={{
-            background: "radial-gradient(ellipse 75% 60% at 50% 50%, transparent 25%, rgba(0,0,0,0.6) 100%)"
+      <div className="sticky top-0 h-screen overflow-hidden" style={{ contain: "paint layout" }}>
+
+        {/* Background — exact match of LineUp section */}
+        <div className="absolute inset-0 bg-[#0a0a0a]">
+          <StarfieldCanvas opacity={0.45} />
+
+          {/* Orbs */}
+          <motion.div className="absolute rounded-full pointer-events-none"
+            style={{ width: 520, height: 520, top: "55%", left: "8%", background: "#ff6b35", opacity: 0.13, filter: "blur(120px)", translateX: "-50%", translateY: "-50%" }}
+            animate={{ x: [0, 70, -30, 50, 0], y: [0, -90, 60, -40, 0] }}
+            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
+          />
+          <motion.div className="absolute rounded-full pointer-events-none"
+            style={{ width: 440, height: 440, top: "10%", left: "65%", background: "#00e676", opacity: 0.10, filter: "blur(100px)", translateX: "-50%", translateY: "-50%" }}
+            animate={{ x: [0, -60, 40, -20, 0], y: [0, 80, -50, 60, 0] }}
+            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
+          />
+          <motion.div className="absolute rounded-full pointer-events-none"
+            style={{ width: 380, height: 380, top: "40%", left: "45%", background: "#7c3aed", opacity: 0.09, filter: "blur(110px)", translateX: "-50%", translateY: "-50%" }}
+            animate={{ x: [0, 40, -60, 20, 0], y: [0, -40, 70, -30, 0] }}
+            transition={{ duration: 19, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
+          />
+
+          {/* Noise grain */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat", backgroundSize: "128px",
           }} />
         </div>
 
