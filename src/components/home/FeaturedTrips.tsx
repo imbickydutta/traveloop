@@ -160,27 +160,31 @@ function TripCard({
 
         {/* Info */}
         <div
-          className="flex-1 min-h-0 flex flex-col justify-between px-5 py-4 overflow-hidden"
+          className="flex-1 min-h-0 flex flex-col justify-between px-5 py-3 sm:py-4 overflow-hidden"
           style={{
             background: `linear-gradient(140deg, rgba(${rgb},0.08) 0%, #0c0c0c 40%, #0a0a0a 100%)`,
             borderTop: `1px solid ${accent}14`,
           }}
         >
           {/* Top: title + ticker + stats + price */}
-          <div className="flex flex-col gap-2.5 min-h-0">
-            <div>
-              <p className="text-[10px] font-bold tracking-[0.22em] uppercase mb-1"
-                style={{ color: "rgba(255,255,255,0.3)" }}>
-                {trip.destination}
-              </p>
-              <h2 className="font-black text-white leading-[1.0] tracking-tight"
-                style={{ fontSize: "clamp(1.5rem, 3vw, 2.6rem)" }}>
-                {nameMain}{" "}
-                <span className="italic" style={{ color: accent }}>{nameLast}</span>
-              </h2>
-              <p className="text-[12px] text-white/40 mt-1">
-                {trip.dateDisplay} &nbsp;·&nbsp; {trip.durationShort}
-              </p>
+          <div className="flex flex-col gap-2 min-h-0">
+            {/* Title row — date/duration fills whitespace on the right */}
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold tracking-[0.22em] uppercase mb-1"
+                  style={{ color: "rgba(255,255,255,0.3)" }}>
+                  {trip.destination}
+                </p>
+                <h2 className="font-black text-white leading-[1.0] tracking-tight"
+                  style={{ fontSize: "clamp(1.5rem, 3vw, 2.6rem)" }}>
+                  {nameMain}{" "}
+                  <span className="italic" style={{ color: accent }}>{nameLast}</span>
+                </h2>
+              </div>
+              <div className="text-right shrink-0 pt-1">
+                <p className="text-[12px] font-bold text-white/60 leading-tight">{trip.dateDisplay}</p>
+                <p className="text-[10px] text-white/35 mt-0.5">{trip.durationShort}</p>
+              </div>
             </div>
 
             {/* Ticker */}
@@ -231,8 +235,8 @@ function TripCard({
             </div>
           </div>
 
-          {/* Tagline */}
-          <p className="text-sm italic leading-snug text-white/40 px-0.5">
+          {/* Tagline — hidden on mobile to prevent overflow */}
+          <p className="hidden sm:block text-sm italic leading-snug text-white/40 px-0.5">
             &ldquo;{trip.tagline}&rdquo;
           </p>
 
