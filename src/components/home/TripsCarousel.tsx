@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import Image from "next/image";
 import { Trip } from "@/types/trip";
 import TripTicketCard from "./TripTicketCard";
@@ -250,7 +250,7 @@ function NavButton({
       aria-label={direction === "left" ? "Previous trip" : "Next trip"}
       className="flex items-center justify-center w-9 h-9 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-white transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
     >
-      {direction === "left" ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
+      {direction === "left" ? <CaretLeft size={16} weight="bold" /> : <CaretRight size={16} weight="bold" />}
     </button>
   );
 }

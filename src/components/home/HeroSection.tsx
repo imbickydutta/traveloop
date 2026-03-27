@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowRight } from "@phosphor-icons/react";
 
 const DESTINATIONS = ["Thailand", "Egypt", "Bali", "Kenya", "Maldives", "Japan"];
 const TYPE_MS   = 110;
@@ -160,7 +161,7 @@ export default function HeroSection() {
             className="group relative inline-flex items-center gap-1.5 bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold text-xs sm:text-sm tracking-widest uppercase px-5 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,53,0.5)]"
           >
             Upcoming Trips
-            <ArrowRight />
+            <ArrowRight size={16} weight="bold" className="transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
 
           <Link
@@ -190,19 +191,3 @@ export default function HeroSection() {
   );
 }
 
-function ArrowRight() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2.5}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </svg>
-  );
-}

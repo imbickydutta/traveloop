@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Check, X as XIcon } from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
@@ -221,9 +222,7 @@ export default function KenyaSafariPage() {
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{
                     background: "rgba(0,230,118,0.14)", border: "1px solid rgba(0,230,118,0.28)",
                   }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M20 6L9 17l-5-5" />
-                    </svg>
+                    <Check size={14} weight="bold" color="#00e676" />
                   </div>
                   <div>
                     <p className="text-[11px] font-black tracking-[0.2em] uppercase" style={{ color: "#00e676" }}>Inclusions</p>
@@ -234,9 +233,7 @@ export default function KenyaSafariPage() {
                   {INCLUSIONS.map((item) => (
                     <li key={item} className="flex items-start gap-3 py-2.5">
                       <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(0,230,118,0.12)" }}>
-                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M20 6L9 17l-5-5" />
-                        </svg>
+                        <Check size={10} weight="bold" color="#00e676" />
                       </span>
                       <span className="text-sm text-white/75 leading-snug">{item}</span>
                     </li>
@@ -257,9 +254,7 @@ export default function KenyaSafariPage() {
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{
                     background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)",
                   }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
+                    <XIcon size={14} weight="bold" color="#ef4444" />
                   </div>
                   <div>
                     <p className="text-[11px] font-black tracking-[0.2em] uppercase text-red-400">Exclusions</p>
@@ -270,9 +265,7 @@ export default function KenyaSafariPage() {
                   {EXCLUSIONS.map((item) => (
                     <li key={item} className="flex items-start gap-3 py-2.5">
                       <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(239,68,68,0.10)" }}>
-                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M18 6L6 18M6 6l12 12" />
-                        </svg>
+                        <XIcon size={10} weight="bold" color="#ef4444" />
                       </span>
                       <span className="text-sm text-white/50 leading-snug">{item}</span>
                     </li>

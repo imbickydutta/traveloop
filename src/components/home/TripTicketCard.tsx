@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Ticket } from "@phosphor-icons/react";
 import { Trip } from "@/types/trip";
 import TalkToUsModal from "./TalkToUsModal";
 
@@ -161,7 +162,7 @@ export default function TripTicketCard({ trip }: Props) {
                 el.style.boxShadow = "none";
               }}
             >
-              <TicketIcon color={trip.accentColor} />
+              <Ticket size={16} weight="light" color={trip.accentColor} />
               Itinerary
             </Link>
 
@@ -309,15 +310,3 @@ function WhatsAppDot() {
   );
 }
 
-function TicketIcon({ color }: { color: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" style={{ color }}>
-      <path
-        d="M2 9a1 1 0 011-1h1a2 2 0 100-4H3a1 1 0 01-1-1V3a1 1 0 011-1h18a1 1 0 011 1v4a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v4a1 1 0 01-1 1H3a1 1 0 01-1-1v-4a1 1 0 011-1h1a2 2 0 100-4H3a1 1 0 01-1-1V9z"
-        stroke="currentColor"
-        strokeWidth={1.5}
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}

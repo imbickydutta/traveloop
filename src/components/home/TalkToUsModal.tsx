@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X } from "@phosphor-icons/react";
 import { Trip } from "@/types/trip";
 
 const WHATSAPP_NUMBER = "919999999999"; // replace with real number
@@ -95,7 +95,7 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
                 className="text-white/40 hover:text-white transition-colors p-1 -mr-1 -mt-1"
                 aria-label="Close"
               >
-                <X size={18} />
+                <X size={18} weight="light" />
               </button>
             </div>
 
