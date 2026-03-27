@@ -5,39 +5,6 @@ import { TRIPS } from "@/data/trips";
 import TripsCarousel from "./TripsCarousel";
 import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
 
-/* ── Orb config — each drifts on its own infinite keyframe path ── */
-const ORBS = [
-  {
-    color: "#ff6b35",
-    size: 520,
-    blur: 120,
-    opacity: 0.13,
-    top: "55%",
-    left: "8%",
-    animate: { x: [0, 70, -30, 50, 0], y: [0, -90, 60, -40, 0] },
-    duration: 22,
-  },
-  {
-    color: "#00e676",
-    size: 440,
-    blur: 100,
-    opacity: 0.10,
-    top: "10%",
-    left: "65%",
-    animate: { x: [0, -60, 40, -20, 0], y: [0, 80, -50, 60, 0] },
-    duration: 28,
-  },
-  {
-    color: "#7c3aed",
-    size: 380,
-    blur: 110,
-    opacity: 0.09,
-    top: "40%",
-    left: "45%",
-    animate: { x: [0, 40, -60, 20, 0], y: [0, -40, 70, -30, 0] },
-    duration: 19,
-  },
-];
 
 const container: Variants = {
   hidden: {},
@@ -54,48 +21,22 @@ export default function TheLineUp() {
     <section id="lineup" className="relative h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
 
       {/* ── Fixed background — persists into featured trips as you scroll ── */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: -1 }} aria-hidden>
-        {/* Dark base */}
-        <div className="absolute inset-0 bg-[#0a0a0a]" />
-
-        {/* Starfield warp */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        zIndex: -1,
+        background: `
+          radial-gradient(ellipse 55% 50% at 8% 55%, rgba(255,107,53,0.32) 0%, rgba(255,107,53,0.10) 45%, transparent 70%),
+          radial-gradient(ellipse 50% 55% at 65% 10%, rgba(0,230,118,0.26) 0%, rgba(0,230,118,0.08) 45%, transparent 70%),
+          radial-gradient(ellipse 45% 50% at 45% 40%, rgba(124,58,237,0.24) 0%, rgba(124,58,237,0.07) 45%, transparent 70%),
+          #0a0a0a
+        `
+      }} aria-hidden>
         <StarfieldCanvas opacity={0.45} />
 
-        {/* Ambient orbs */}
-        {ORBS.map((orb, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: orb.size,
-              height: orb.size,
-              top: orb.top,
-              left: orb.left,
-              background: orb.color,
-              opacity: orb.opacity,
-              filter: `blur(${orb.blur}px)`,
-              translateX: "-50%",
-              translateY: "-50%",
-            }}
-            animate={orb.animate}
-            transition={{
-              duration: orb.duration,
-              repeat: Infinity,
-              ease: "easeInOut",
-              repeatType: "mirror",
-            }}
-          />
-        ))}
-
-        {/* Subtle noise grain overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "repeat",
-            backgroundSize: "128px",
-          }}
-        />
+        {/* Noise grain */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "repeat", backgroundSize: "128px",
+        }} />
       </div>
 
       {/* ── All content staggered ── */}

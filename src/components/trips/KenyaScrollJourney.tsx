@@ -183,29 +183,19 @@ export default function KenyaScrollJourney() {
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
       <div className="sticky top-0 h-screen overflow-hidden" style={{ contain: "paint layout" }}>
 
-        {/* Background — exact match of LineUp section */}
-        <div className="absolute inset-0 bg-[#0a0a0a]">
+        {/* Background — static gradient orbs (no animation = no GPU cost) + starfield */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: `
+            radial-gradient(ellipse 55% 50% at 8% 55%, rgba(255,107,53,0.32) 0%, rgba(255,107,53,0.10) 45%, transparent 70%),
+            radial-gradient(ellipse 50% 55% at 65% 10%, rgba(0,230,118,0.26) 0%, rgba(0,230,118,0.08) 45%, transparent 70%),
+            radial-gradient(ellipse 45% 50% at 45% 40%, rgba(124,58,237,0.24) 0%, rgba(124,58,237,0.07) 45%, transparent 70%),
+            #0a0a0a
+          `
+        }}>
           <StarfieldCanvas opacity={0.45} />
 
-          {/* Orbs */}
-          <motion.div className="absolute rounded-full pointer-events-none"
-            style={{ width: 520, height: 520, top: "55%", left: "8%", background: "#ff6b35", opacity: 0.13, filter: "blur(120px)", translateX: "-50%", translateY: "-50%" }}
-            animate={{ x: [0, 70, -30, 50, 0], y: [0, -90, 60, -40, 0] }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
-          />
-          <motion.div className="absolute rounded-full pointer-events-none"
-            style={{ width: 440, height: 440, top: "10%", left: "65%", background: "#00e676", opacity: 0.10, filter: "blur(100px)", translateX: "-50%", translateY: "-50%" }}
-            animate={{ x: [0, -60, 40, -20, 0], y: [0, 80, -50, 60, 0] }}
-            transition={{ duration: 28, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
-          />
-          <motion.div className="absolute rounded-full pointer-events-none"
-            style={{ width: 380, height: 380, top: "40%", left: "45%", background: "#7c3aed", opacity: 0.09, filter: "blur(110px)", translateX: "-50%", translateY: "-50%" }}
-            animate={{ x: [0, 40, -60, 20, 0], y: [0, -40, 70, -30, 0] }}
-            transition={{ duration: 19, repeat: Infinity, ease: "easeInOut", repeatType: "mirror" }}
-          />
-
           {/* Noise grain */}
-          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{
+          <div className="absolute inset-0 opacity-[0.03]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
             backgroundRepeat: "repeat", backgroundSize: "128px",
           }} />

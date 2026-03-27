@@ -38,7 +38,7 @@ function cardX(offset: number, d: Dims): number {
 export default function TripsCarousel({ trips }: Props) {
   const [active, setActive] = useState(0);
   const [dims, setDims] = useState<Dims>({ activeW: 360, sideW: 260, spacing: 334 });
-  const userInteracted = useRef(false);
+  const pauseUntil = useRef(0);
 
   const pointerStartX = useRef(0);
   const didDrag = useRef(false);
@@ -51,29 +51,20 @@ export default function TripsCarousel({ trips }: Props) {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // On mobile: after entry animations settle, auto-scroll through all cards
-  // once to hint there are more, then stop.
+  // Auto-scroll every 5 seconds — pauses for 10s after any user interaction
   useEffect(() => {
-    if (window.innerWidth >= 768) return;
-    const n = trips.length;
-    let interval: ReturnType<typeof setInterval>;
-    // Start exactly when the carousel's own entry animation finishes:
-    // delayChildren(0.1) + 2×stagger(0.28) + duration(0.9) = ~1.6s
-    const timeout = setTimeout(() => {
-      let step = 0;
-      interval = setInterval(() => {
-        if (userInteracted.current) { clearInterval(interval); return; }
-        step++;
-        if (step >= n) { clearInterval(interval); return; }
-        setActive(step);
-      }, 700);
-    }, 1600);
-    return () => { clearTimeout(timeout); clearInterval(interval); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const interval = setInterval(() => {
+      if (Date.now() < pauseUntil.current) return;
+      setActive((a) => (a + 1) % trips.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [trips.length]);
 
-  const n    = trips.length;
-  const goTo = (i: number) => setActive(((i % n) + n) % n);
+  const n = trips.length;
+  const goTo = (i: number) => {
+    pauseUntil.current = Date.now() + 10000;
+    setActive(((i % n) + n) % n);
+  };
 
   /** Circular offset: wraps so adjacent items always show on both sides */
   const circOffset = (index: number) => {
@@ -86,7 +77,7 @@ export default function TripsCarousel({ trips }: Props) {
 
   /* ── Swipe / drag ── */
   const onPointerDown = (e: React.PointerEvent) => {
-    userInteracted.current = true;
+    pauseUntil.current = Date.now() + 10000;
     pointerStartX.current = e.clientX;
     didDrag.current = false;
   };
