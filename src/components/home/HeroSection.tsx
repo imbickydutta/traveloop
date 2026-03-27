@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -84,7 +84,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
 
       {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[120px] sm:pt-[200px] md:pt-[220px]">
+      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[145px] sm:pt-[200px] md:pt-[220px]">
 
         {/* Product description */}
         <motion.p
@@ -103,7 +103,8 @@ export default function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.7, ease: "easeOut" }}
         >
-          Plan your next trip to <TypewriterPlace />
+          Plan your next trip to<br />
+          <span className="inline-block min-h-[1.2em] min-w-[4ch]"><TypewriterPlace /></span>
         </motion.h1>
 
         {/* Benefit pills — single row on mobile */}
