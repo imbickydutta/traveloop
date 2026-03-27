@@ -219,7 +219,7 @@ function TripCard({
               <p className="font-black leading-none" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: accent }}>
                 {formatINR(displayPrice)}
               </p>
-              {trip.earlyBirdPercent > 0 && (
+              {(trip.earlyBirdPercent ?? 0) > 0 && (
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-white/30 line-through text-sm">{formatINR(trip.pricePerPaxINR)}</span>
                   <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
