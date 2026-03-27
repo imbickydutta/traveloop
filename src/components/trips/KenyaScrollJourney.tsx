@@ -53,8 +53,8 @@ function StackCard({
 
   const y = useTransform(activeIndex, (a) => {
     const pos = index - a;
-    if (pos >  1.2) return "78vh";
-    if (pos >  0)   return `${pos * 45}vh`;
+    if (pos >  1.2) return "110vh";
+    if (pos >  0)   return `${pos * 80}vh`;
     return "0vh";
   });
 
