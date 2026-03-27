@@ -2,7 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Check, X as XIcon } from "@phosphor-icons/react";
+import {
+  Check, X as XIcon, CheckCircle, XCircle,
+  Ticket, Phone, EnvelopeSimple, Warning,
+  Plus, Minus, ArrowLeft, WhatsappLogo,
+} from "@phosphor-icons/react";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
@@ -229,13 +233,12 @@ export default function KenyaSafariPage() {
                     <p className="text-[10px] text-white/30 mt-0.5">{INCLUSIONS.length} items covered</p>
                   </div>
                 </div>
-                <ul className="px-5 py-3 divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-                  {INCLUSIONS.map((item) => (
-                    <li key={item} className="flex items-start gap-3 py-2.5">
-                      <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(0,230,118,0.12)" }}>
-                        <Check size={10} weight="bold" color="#00e676" />
-                      </span>
-                      <span className="text-sm text-white/75 leading-snug">{item}</span>
+                <ul className="px-5 py-2">
+                  {INCLUSIONS.map((item, i) => (
+                    <li key={item} className="flex items-start gap-3 py-2.5"
+                      style={{ borderBottom: i < INCLUSIONS.length - 1 ? "1px solid rgba(0,230,118,0.07)" : "none" }}>
+                      <CheckCircle size={17} weight="fill" color="#00e676" className="flex-shrink-0 mt-0.5 opacity-80" />
+                      <span className="text-sm text-white/70 leading-snug">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -261,13 +264,12 @@ export default function KenyaSafariPage() {
                     <p className="text-[10px] text-white/30 mt-0.5">{EXCLUSIONS.length} items not covered</p>
                   </div>
                 </div>
-                <ul className="px-5 py-3 divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
-                  {EXCLUSIONS.map((item) => (
-                    <li key={item} className="flex items-start gap-3 py-2.5">
-                      <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(239,68,68,0.10)" }}>
-                        <XIcon size={10} weight="bold" color="#ef4444" />
-                      </span>
-                      <span className="text-sm text-white/50 leading-snug">{item}</span>
+                <ul className="px-5 py-2">
+                  {EXCLUSIONS.map((item, i) => (
+                    <li key={item} className="flex items-start gap-3 py-2.5"
+                      style={{ borderBottom: i < EXCLUSIONS.length - 1 ? "1px solid rgba(239,68,68,0.07)" : "none" }}>
+                      <XCircle size={17} weight="fill" color="#ef4444" className="flex-shrink-0 mt-0.5 opacity-80" />
+                      <span className="text-sm text-white/55 leading-snug">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -293,22 +295,22 @@ export default function KenyaSafariPage() {
                   <p className="text-white/35 text-xs mt-1">Due 30 days before departure</p>
                 </div>
               </div>
-              <div className="border-t pt-4 text-xs text-white/35 space-y-1.5" style={{ borderColor:"rgba(255,255,255,0.06)" }}>
-                <p>📞 +91 70037 99172 &nbsp;|&nbsp; +84 38 215 4314 (WhatsApp)</p>
-                <p>📩 Send passport copy (first & last page) + booking amount to confirm</p>
-                <p>🎟️ Kenya ETA visa issued 21 days before departure</p>
+              <div className="border-t pt-4 text-xs text-white/35 space-y-2" style={{ borderColor:"rgba(255,255,255,0.06)" }}>
+                <p className="flex items-center gap-2"><Phone size={13} weight="light" className="flex-shrink-0 opacity-60" /> +91 70037 99172 &nbsp;|&nbsp; +84 38 215 4314 (WhatsApp)</p>
+                <p className="flex items-center gap-2"><EnvelopeSimple size={13} weight="light" className="flex-shrink-0 opacity-60" /> Send passport copy (first &amp; last page) + booking amount to confirm</p>
+                <p className="flex items-center gap-2"><Ticket size={13} weight="light" className="flex-shrink-0 opacity-60" /> Kenya ETA visa issued 21 days before departure</p>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <button onClick={() => setModalOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 font-bold text-sm tracking-widest uppercase transition-all duration-300 hover:brightness-110"
                 style={{ background: ACCENT, color:"#000", boxShadow:`0 4px 28px ${ACCENT}40` }}>
-                🎟️ Book Your Spot
+                <Ticket size={16} weight="bold" /> Book Your Spot
               </button>
               <button onClick={() => setModalOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 rounded-2xl py-4 font-bold text-sm tracking-widest uppercase transition-all duration-200 hover:brightness-110"
                 style={{ background:"#25d366", color:"#fff", boxShadow:"0 4px 20px rgba(37,211,102,0.28)" }}>
-                💬 Talk to Us
+                <WhatsappLogo size={16} weight="fill" /> Talk to Us
               </button>
             </div>
           </FadeUp>
@@ -320,8 +322,13 @@ export default function KenyaSafariPage() {
                 <div key={i} className="rounded-xl overflow-hidden" style={{ border:"1px solid rgba(255,255,255,0.05)" }}>
                   <button className="w-full flex items-center justify-between px-4 py-3 text-left"
                     onClick={() => setOpenDisclaimer(openDisclaimer === i ? null : i)}>
-                    <span className="text-xs font-semibold text-white/35">{d.title}</span>
-                    <span className="text-white/20 text-sm">{openDisclaimer === i ? "−" : "+"}</span>
+                    <span className="flex items-center gap-2 text-xs font-semibold text-white/35">
+                      <Warning size={13} weight="fill" className="text-amber-500/60 flex-shrink-0" />
+                      {d.title.replace(" ⚠️", "")}
+                    </span>
+                    {openDisclaimer === i
+                      ? <Minus size={13} weight="bold" className="text-white/20 flex-shrink-0" />
+                      : <Plus  size={13} weight="bold" className="text-white/20 flex-shrink-0" />}
                   </button>
                   <AnimatePresence initial={false}>
                     {openDisclaimer === i && (
@@ -338,8 +345,8 @@ export default function KenyaSafariPage() {
             </div>
           </FadeUp>
 
-          <Link href="/" className="text-xs text-white/25 hover:text-white/55 transition-colors">
-            ← Back to home
+          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-white/25 hover:text-white/55 transition-colors">
+            <ArrowLeft size={12} weight="bold" /> Back to home
           </Link>
         </div>
 
@@ -347,14 +354,14 @@ export default function KenyaSafariPage() {
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 flex gap-2 p-4"
           style={{ background:"linear-gradient(to top, rgba(6,6,6,0.98) 60%, transparent)" }}>
           <button onClick={() => setModalOpen(true)}
-            className="flex-1 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider"
             style={{ background: ACCENT, color:"#000" }}>
-            🎟️ Book Spot
+            <Ticket size={15} weight="bold" /> Book Spot
           </button>
           <button onClick={() => setModalOpen(true)}
-            className="flex-1 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm uppercase tracking-wider"
             style={{ background:"#25d366", color:"#fff" }}>
-            💬 Talk to Us
+            <WhatsappLogo size={15} weight="fill" /> Talk to Us
           </button>
         </div>
       </div>
