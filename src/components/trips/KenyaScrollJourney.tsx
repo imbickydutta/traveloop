@@ -6,7 +6,7 @@ import Image from "next/image";
 import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
 
 /* How many cards away from active to keep mounted (each side) */
-const RENDER_WINDOW = 3;
+const RENDER_WINDOW = 2;
 
 /* Pause starfield on any mobile screen — no phone has a desktop-class GPU */
 function useIsMobile() {
@@ -85,7 +85,7 @@ function StackCard({
     const pos = index - a;
     if (pos >  1)    return 0.86;
     if (pos >  0)    return 0.86 + (1 - pos) * 0.16;
-    if (pos > -0.15) return 1.02 - Math.abs(pos) / 0.15 * 0.02;
+    if (!isMobile && pos > -0.15) return 1.02 - Math.abs(pos) / 0.15 * 0.02;
     return 1.0;
   });
 
@@ -141,7 +141,7 @@ function StackCard({
           </p>
           <h3
             className="font-black leading-[1.1] text-white mb-3"
-            style={{ fontSize: "clamp(1.5rem, 5vh, 2rem)", textShadow: "0 2px 16px rgba(0,0,0,0.7)" }}
+            style={{ fontSize: "clamp(1.5rem, 5vh, 2rem)", textShadow: isMobile ? undefined : "0 2px 16px rgba(0,0,0,0.7)" }}
           >
             {day.title.split(" ").slice(0, -1).join(" ")}{" "}
             <span style={{ color: ACCENT }} className="italic">
@@ -152,7 +152,7 @@ function StackCard({
           <ul className={`space-y-2.5 ${isLeft ? "" : "flex flex-col items-end"}`}>
             {day.bullets.map((b, j) => (
               <li key={j} className={`flex items-center gap-3 text-[13px] font-medium ${isLeft ? "" : "flex-row-reverse"}`}
-                style={{ color: "rgba(255,255,255,0.88)", textShadow: "0 1px 8px rgba(0,0,0,0.8)" }}>
+                style={{ color: "rgba(255,255,255,0.88)", textShadow: isMobile ? undefined : "0 1px 8px rgba(0,0,0,0.8)" }}>
                 <span className="w-[6px] h-[6px] rounded-full flex-shrink-0" style={{ background: ACCENT }} />
                 <span className="leading-snug">{b}</span>
               </li>
@@ -218,11 +218,13 @@ export default function KenyaScrollJourney() {
         }}>
           {!isMobile && <StarfieldCanvas opacity={0.45} />}
 
-          {/* Noise grain */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "repeat", backgroundSize: "128px",
-          }} />
+          {/* Noise grain — desktop only */}
+          {!isMobile && (
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+              backgroundRepeat: "repeat", backgroundSize: "128px",
+            }} />
+          )}
         </div>
 
         {/* Sticky header */}
