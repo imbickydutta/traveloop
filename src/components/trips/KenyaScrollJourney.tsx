@@ -1,12 +1,12 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useScroll, useTransform, useMotionValueEvent, type MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionTemplate, useMotionValueEvent, type MotionValue } from "framer-motion";
 import Image from "next/image";
 import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
 
 const ACCENT  = "#f5a623";
-const SCROLL_PER_CARD = 120; // vh of scroll space per card
+const SCROLL_PER_CARD = 80; // vh of scroll space per card
 
 /* Per-card resting tilt — alternates so the stack fans naturally */
 const TILTS = [0, -4, 3, -5, 3.5, -3, 4.5, -3.5, 2.5];
@@ -54,7 +54,7 @@ function StackCard({
   const y = useTransform(activeIndex, (a) => {
     const pos = index - a;
     if (pos >  1.2) return "78vh";
-    if (pos >  0)   return `${pos * 60}vh`;
+    if (pos >  0)   return `${pos * 45}vh`;
     return "0vh";
   });
 
@@ -81,20 +81,17 @@ function StackCard({
     return 1;
   });
 
-  const zIndex = index + 1;
+  // Single combined transform — eliminates the second nested motion.div
+  const transform = useMotionTemplate`translateY(${y}) rotate(${rotate}deg) scale(${scale})`;
 
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center"
-      style={{ y, zIndex }}
+      style={{ transform, opacity, zIndex: index + 1, willChange: "transform" }}
     >
-      <motion.div
+      <div
         className="relative rounded-2xl overflow-hidden w-[calc(85vw-27px)] sm:w-[500px] h-[49vh] sm:h-[58vh]"
         style={{
-          rotate,
-          scale,
-          opacity,
-          willChange: "transform",
           boxShadow: "0 32px 80px rgba(0,0,0,0.85), 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
@@ -181,7 +178,7 @@ export default function KenyaScrollJourney() {
 
   return (
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "paint layout" }}>
+      <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "paint layout", willChange: "transform", transform: "translateZ(0)" }}>
 
         {/* Background — static gradient orbs (no animation = no GPU cost) + starfield */}
         <div className="absolute inset-0 pointer-events-none" style={{

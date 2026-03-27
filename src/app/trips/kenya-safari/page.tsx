@@ -195,30 +195,85 @@ export default function KenyaSafariPage() {
         <div className="max-w-3xl mx-auto px-5 sm:px-6 pb-12 sm:pb-20">
 
           <FadeUp className="mb-14 pt-10">
-            <h2 className="text-2xl sm:text-3xl font-black mb-6">
-              What's <span className="italic" style={{ color: ACCENT }}>Included</span>
+            <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/25 mb-2">Trip Details</p>
+            <h2 className="text-2xl sm:text-3xl font-black mb-8">
+              What&apos;s <span className="italic" style={{ color: ACCENT }}>Included</span>
             </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="rounded-2xl p-5" style={{ background:"rgba(0,230,118,0.05)", border:"1px solid rgba(0,230,118,0.12)" }}>
-                <p className="text-[10px] font-bold tracking-widest uppercase text-[#00c864] mb-4">✓ Inclusions</p>
-                <ul className="space-y-2.5">
+
+            <div className="grid sm:grid-cols-2 gap-4">
+
+              {/* ── Inclusions ── */}
+              <div className="rounded-2xl overflow-hidden" style={{
+                background: "linear-gradient(145deg, rgba(0,230,118,0.08) 0%, rgba(6,6,6,0.6) 55%)",
+                border: "1px solid rgba(0,230,118,0.18)",
+                boxShadow: "0 0 40px rgba(0,230,118,0.04), inset 0 1px 0 rgba(0,230,118,0.1)",
+              }}>
+                <div className="px-5 py-4 flex items-center gap-3" style={{
+                  borderBottom: "1px solid rgba(0,230,118,0.10)",
+                  background: "rgba(0,230,118,0.06)",
+                }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{
+                    background: "rgba(0,230,118,0.14)", border: "1px solid rgba(0,230,118,0.28)",
+                  }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-black tracking-[0.2em] uppercase" style={{ color: "#00e676" }}>Inclusions</p>
+                    <p className="text-[10px] text-white/30 mt-0.5">{INCLUSIONS.length} items covered</p>
+                  </div>
+                </div>
+                <ul className="px-5 py-3 divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
                   {INCLUSIONS.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-sm text-white/70">
-                      <span className="text-[#00c864] mt-0.5 flex-shrink-0">✓</span>{item}
+                    <li key={item} className="flex items-start gap-3 py-2.5">
+                      <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(0,230,118,0.12)" }}>
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#00e676" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                      </span>
+                      <span className="text-sm text-white/75 leading-snug">{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <div className="rounded-2xl p-5" style={{ background:"rgba(239,68,68,0.05)", border:"1px solid rgba(239,68,68,0.10)" }}>
-                <p className="text-[10px] font-bold tracking-widest uppercase text-red-400 mb-4">✗ Exclusions</p>
-                <ul className="space-y-2.5">
+
+              {/* ── Exclusions ── */}
+              <div className="rounded-2xl overflow-hidden" style={{
+                background: "linear-gradient(145deg, rgba(239,68,68,0.07) 0%, rgba(6,6,6,0.6) 55%)",
+                border: "1px solid rgba(239,68,68,0.15)",
+                boxShadow: "0 0 40px rgba(239,68,68,0.03), inset 0 1px 0 rgba(239,68,68,0.08)",
+              }}>
+                <div className="px-5 py-4 flex items-center gap-3" style={{
+                  borderBottom: "1px solid rgba(239,68,68,0.08)",
+                  background: "rgba(239,68,68,0.05)",
+                }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{
+                    background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.25)",
+                  }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-black tracking-[0.2em] uppercase text-red-400">Exclusions</p>
+                    <p className="text-[10px] text-white/30 mt-0.5">{EXCLUSIONS.length} items not covered</p>
+                  </div>
+                </div>
+                <ul className="px-5 py-3 divide-y" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
                   {EXCLUSIONS.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-sm text-white/50">
-                      <span className="text-red-400/70 mt-0.5 flex-shrink-0">✗</span>{item}
+                    <li key={item} className="flex items-start gap-3 py-2.5">
+                      <span className="w-[18px] h-[18px] rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(239,68,68,0.10)" }}>
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 6L6 18M6 6l12 12" />
+                        </svg>
+                      </span>
+                      <span className="text-sm text-white/50 leading-snug">{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
+
             </div>
           </FadeUp>
 
