@@ -18,7 +18,7 @@ const item: Variants = {
 
 export default function TheLineUp() {
   return (
-    <section id="lineup" className="relative h-screen sm:min-h-screen sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
+    <section id="lineup" className="relative h-[100dvh] sm:min-h-[100dvh] sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
 
       {/* ── Fixed background — persists into featured trips as you scroll ── */}
       <div className="fixed inset-0 pointer-events-none" style={{

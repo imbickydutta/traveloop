@@ -275,9 +275,9 @@ function TripSpotlight({ trip, index, total }: { trip: Trip; index: number; tota
   const accent = trip.accentColor;
 
   return (
-    <section className="relative h-screen flex flex-col overflow-hidden snap-start lg:hidden">
+    <section className="relative h-[100dvh] flex flex-col overflow-hidden snap-start lg:hidden">
 
-      <div className="relative flex flex-col h-full w-full max-w-7xl mx-auto px-4 sm:px-6 pt-[72px] pb-5 sm:pb-6">
+      <div className="relative flex flex-col h-full w-full max-w-7xl mx-auto px-4 sm:px-6 pt-[72px] pb-[env(safe-area-inset-bottom,20px)] sm:pb-6" style={{ paddingBottom: "max(20px, env(safe-area-inset-bottom))" }}>
         {/* Label row */}
         <div className="flex items-center justify-between mb-3 shrink-0">
           <p className="text-[11px] font-bold tracking-[0.3em] uppercase" style={{ color: accent }}>
@@ -288,7 +288,7 @@ function TripSpotlight({ trip, index, total }: { trip: Trip; index: number; tota
           </p>
         </div>
 
-        <TripCard trip={trip} index={index} total={total} imageHeight="h-[52%]" />
+        <TripCard trip={trip} index={index} total={total} imageHeight="h-[45%]" />
       </div>
     </section>
   );
@@ -297,7 +297,7 @@ function TripSpotlight({ trip, index, total }: { trip: Trip; index: number; tota
 /* ── Desktop: two trips side-by-side in one full-screen snap section ── */
 function DesktopTripPair({ pair, startIndex, total }: { pair: Trip[]; startIndex: number; total: number }) {
   return (
-    <section className="hidden lg:flex h-screen snap-start overflow-hidden gap-6 px-6 pt-[72px] pb-6 justify-center">
+    <section className="hidden lg:flex h-[100dvh] snap-start overflow-hidden gap-6 px-6 pt-[72px] pb-6 justify-center">
 
       {pair.map((trip, i) => (
         <div key={trip.id} className="w-[30%] flex-shrink-0 flex flex-col">

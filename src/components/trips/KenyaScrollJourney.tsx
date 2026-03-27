@@ -181,7 +181,7 @@ export default function KenyaScrollJourney() {
 
   return (
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
-      <div className="sticky top-0 h-screen overflow-hidden" style={{ contain: "paint layout" }}>
+      <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "paint layout" }}>
 
         {/* Background — static gradient orbs (no animation = no GPU cost) + starfield */}
         <div className="absolute inset-0 pointer-events-none" style={{
