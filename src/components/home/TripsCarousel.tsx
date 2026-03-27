@@ -25,8 +25,11 @@ function getDims(vw: number): Dims {
   if (vw >= 1280) return { activeW: 620, sideW: 268, spacing: 476 };
   if (vw >= 1024) return { activeW: 520, sideW: 264, spacing: 414 };
   if (vw >= 768)  return { activeW: 420, sideW: 255, spacing: 366 };
-  // Mobile: fill most of the screen width, no side peek needed
-  return { activeW: Math.min(340, vw - 48), sideW: 220, spacing: 300 };
+  // Mobile: active card leaves 28px padding each side, side cards peek 38px
+  const peek  = 38;
+  const sideW = 120;
+  const spacing = Math.round(vw / 2 + sideW / 2 - peek);
+  return { activeW: vw - 56, sideW, spacing };
 }
 
 /** x translation (from left:50%) to position a card at a given carousel offset */
