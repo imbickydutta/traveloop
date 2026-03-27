@@ -55,7 +55,7 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
         onClick={onClose}
       >
         {/* Blur overlay */}
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/70 sm:backdrop-blur-sm" />
 
         {/* Modal card */}
         <motion.div

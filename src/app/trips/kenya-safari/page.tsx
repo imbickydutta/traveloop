@@ -59,8 +59,13 @@ function RouteMarquee() {
   const trackRef = useRef<HTMLDivElement>(null);
   const posRef   = useRef(0);
   const rafRef   = useRef<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    setIsMobile(mobile);
+    if (mobile) return; // CSS animation handles it
+
     const track = trackRef.current;
     if (!track) return;
 
@@ -72,7 +77,6 @@ function RouteMarquee() {
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    // Pause only when the browser tab is hidden — simpler and reliable
     const onVisibility = () => {
       if (document.hidden) {
         if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
@@ -88,13 +92,15 @@ function RouteMarquee() {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
+
   return (
     <>
       <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to right, #060606, transparent)" }} />
       <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to left, #060606, transparent)" }} />
-      <div ref={trackRef} className="flex items-center whitespace-nowrap" style={{ willChange: "transform" }}>
+      <div ref={trackRef} className="flex items-center whitespace-nowrap"
+        style={isMobile ? { animation: "marquee 18s linear infinite" } : { willChange: "transform" }}>
         {MARQUEE_ITEMS.map((d, i) => (
           <span key={i} className="flex items-center">
             <span className="font-black tracking-tight uppercase leading-none"

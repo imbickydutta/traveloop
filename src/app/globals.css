@@ -41,6 +41,12 @@ body {
   border-radius: 2px;
 }
 
+/* CSS marquee — compositor-thread only, no JS */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 /* Utility: hide scrollbar but keep scroll */
 .scrollbar-hide {
   -ms-overflow-style: none;

@@ -3,6 +3,12 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => { setMobile(window.matchMedia("(max-width: 768px)").matches); }, []);
+  return mobile;
+}
+
 /* ── Timing — Navbar reads TRAVEL_DURATION to sync its fade-in ── */
 export const TRAVEL_DURATION = 0.75;
 
@@ -33,6 +39,7 @@ const BEAM_LEN = 8;    // length of the traveling bright dash
 
 export function BlinkingOo({ subtle = false }: { subtle?: boolean }) {
   const GREEN = "#00e676";
+  const isMobile = useIsMobile();
 
   return (
     <svg
@@ -52,7 +59,7 @@ export function BlinkingOo({ subtle = false }: { subtle?: boolean }) {
         d={INF_STROKE}
         stroke={GREEN} strokeWidth="1.8"
         strokeLinecap="round"
-        style={{ filter: `drop-shadow(0 0 3px ${GREEN})` }}
+        style={isMobile ? undefined : { filter: `drop-shadow(0 0 3px ${GREEN})` }}
         strokeDasharray={`${BEAM_LEN} ${PATH_LEN - BEAM_LEN}`}
         animate={{ strokeDashoffset: [0, -PATH_LEN] }}
         transition={{ duration: subtle ? 3 : 2, repeat: Infinity, ease: "linear" }}
