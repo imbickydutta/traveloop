@@ -64,7 +64,6 @@ function StackCard({
   isMobile: boolean;
 }) {
   const isLeft = day.side === "left";
-  // Only promote to GPU layer when within 2 cards of active — saves compositing budget
   const isNear = Math.abs(index - activeValue) <= 2;
 
   const y = useTransform(activeIndex, (a) => {
@@ -97,7 +96,6 @@ function StackCard({
     return 1;
   });
 
-  // Single combined transform — eliminates the second nested motion.div
   const transform = useMotionTemplate`translateY(${y}) rotate(${rotate}deg) scale(${scale})`;
 
   return (
@@ -119,7 +117,6 @@ function StackCard({
         {/* Bottom scrim only — for text contrast */}
         <div className="absolute bottom-0 inset-x-0 h-[70%]"
           style={{ background: "linear-gradient(to top, rgba(0,0,0,0.93) 0%, rgba(0,0,0,0.55) 55%, transparent 100%)" }} />
-
 
         {/* TOP: Day number + date */}
         <div className={`absolute top-5 ${isLeft ? "left-5" : "right-5"} flex flex-col ${isLeft ? "items-start" : "items-end"}`}>
@@ -196,7 +193,6 @@ export default function KenyaScrollJourney() {
 
   const isMobile = useIsMobile();
 
-  // Track active index as a plain number for windowing + willChange gating
   const [activeValue, setActiveValue] = useState(0);
 
   useMotionValueEvent(activeIndex, "change", (v) => {
@@ -207,7 +203,7 @@ export default function KenyaScrollJourney() {
     <div ref={containerRef} style={{ height: `${DAYS.length * SCROLL_PER_CARD}vh` }} className="relative">
       <div className="sticky top-0 h-[100dvh] overflow-hidden" style={{ contain: "strict", willChange: "transform", transform: "translateZ(0)" }}>
 
-        {/* Background — static gradient orbs (no animation = no GPU cost) + starfield */}
+        {/* Background */}
         <div className="absolute inset-0 pointer-events-none" style={{
           background: `
             radial-gradient(ellipse 55% 50% at 8% 55%, rgba(255,107,53,0.32) 0%, rgba(255,107,53,0.10) 45%, transparent 70%),
@@ -237,7 +233,7 @@ export default function KenyaScrollJourney() {
           </h2>
         </div>
 
-        {/* Card deck — only render cards within the window to reduce DOM + layer count */}
+        {/* Card deck */}
         <div className="absolute inset-0">
           {DAYS.map((day, i) => {
             if (Math.abs(i - activeValue) > RENDER_WINDOW) return null;
