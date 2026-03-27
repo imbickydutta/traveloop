@@ -83,12 +83,12 @@ export default function HeroSection() {
       {/* Dark overlay for text legibility */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
 
-      {/* Main content — pushed down to sit below the BrandReveal name */}
-      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[155px] sm:pt-[200px] md:pt-[220px]">
+      {/* Main content */}
+      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[120px] sm:pt-[200px] md:pt-[220px]">
 
         {/* Product description */}
         <motion.p
-          className="text-xs sm:text-sm font-semibold tracking-[0.22em] uppercase text-white/70 mb-5"
+          className="text-[10px] sm:text-sm font-semibold tracking-[0.22em] uppercase text-white/70 mb-3 sm:mb-5"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.6 }}
@@ -98,26 +98,25 @@ export default function HeroSection() {
 
         {/* Main headline */}
         <motion.h1
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight text-white mb-6"
+          className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight text-white mb-4 sm:mb-6"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35, duration: 0.7, ease: "easeOut" }}
         >
-          Plan your next trip to<br />
-          <TypewriterPlace />
+          Plan your next trip to <TypewriterPlace />
         </motion.h1>
 
-        {/* Benefit pills */}
+        {/* Benefit pills — single row on mobile */}
         <motion.div
-          className="flex flex-wrap items-center justify-center gap-2 mb-6"
+          className="flex items-center justify-center gap-1.5 sm:gap-2 mb-4 sm:mb-6"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
         >
-          {["✦ Curated Itineraries", "✦ Group Discounts", "✦ Expert-Led"].map((pill) => (
+          {["✦ Itineraries", "✦ Group Deals", "✦ Expert-Led"].map((pill) => (
             <span
               key={pill}
-              className="text-[11px] sm:text-xs font-semibold tracking-wider text-white/80 px-3 py-1.5 rounded-full"
+              className="text-[10px] sm:text-xs font-semibold tracking-wide text-white/80 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full whitespace-nowrap"
               style={{
                 background: "rgba(255,255,255,0.08)",
                 border: "1px solid rgba(255,255,255,0.15)",
@@ -148,42 +147,40 @@ export default function HeroSection() {
           ))}
         </motion.div>
 
-        {/* CTAs — mt-auto absorbs all remaining space, anchoring buttons near the bottom */}
+        {/* CTAs — side by side on mobile */}
         <motion.div
-          className="mt-auto flex flex-col sm:flex-row items-center gap-4 mb-8 sm:mb-10"
+          className="mt-auto flex flex-row items-center gap-3 mb-6 sm:mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
           <Link
             href="/#lineup"
-            className="group relative inline-flex items-center gap-2 bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold text-sm tracking-widest uppercase px-8 py-4 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,53,0.5)]"
+            className="group relative inline-flex items-center gap-1.5 bg-[#ff6b35] hover:bg-[#ff8c5a] text-white font-bold text-xs sm:text-sm tracking-widest uppercase px-5 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,107,53,0.5)]"
           >
-            See Upcoming Trips
+            Upcoming Trips
             <ArrowRight />
           </Link>
 
           <Link
             href="/curated"
-            className="inline-flex items-center gap-2 border border-white/30 hover:border-white/70 text-white font-bold text-sm tracking-widest uppercase px-8 py-4 rounded-full transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
+            className="inline-flex items-center gap-1.5 border border-white/30 hover:border-white/70 text-white font-bold text-xs sm:text-sm tracking-widest uppercase px-5 sm:px-8 py-3 sm:py-4 rounded-full transition-all duration-300 backdrop-blur-sm hover:bg-white/10"
           >
             Plan My Vibe
           </Link>
         </motion.div>
       </div>
 
-      {/* Bottom — scroll indicator */}
+      {/* Scroll indicator */}
       <motion.div
-        className="relative z-10 flex flex-col items-center pb-8 gap-2"
+        className="relative z-10 flex flex-col items-center pb-5 sm:pb-8 gap-1.5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
       >
-        <span className="text-[10px] tracking-[0.2em] uppercase text-white/40">
-          Scroll
-        </span>
+        <span className="text-[9px] tracking-[0.2em] uppercase text-white/40">Scroll</span>
         <motion.div
-          className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent"
+          className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent"
           animate={{ scaleY: [1, 0.4, 1] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
         />
