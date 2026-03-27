@@ -55,12 +55,13 @@ const DAYS = [
 
 /* ── Stack card ── */
 function StackCard({
-  day, index, activeIndex, activeValue,
+  day, index, activeIndex, activeValue, isMobile,
 }: {
   day: (typeof DAYS)[number];
   index: number;
   activeIndex: MotionValue<number>;
   activeValue: number;
+  isMobile: boolean;
 }) {
   const isLeft = day.side === "left";
   // Only promote to GPU layer when within 2 cards of active — saves compositing budget
@@ -107,7 +108,9 @@ function StackCard({
       <div
         className="relative rounded-2xl overflow-hidden w-[calc(85vw-27px)] sm:w-[500px] h-[49vh] sm:h-[58vh]"
         style={{
-          boxShadow: "0 32px 80px rgba(0,0,0,0.85), 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
+          boxShadow: isMobile
+            ? "0 8px 24px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)"
+            : "0 32px 80px rgba(0,0,0,0.85), 0 8px 24px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
         }}
       >
         {/* Photo */}
@@ -237,7 +240,7 @@ export default function KenyaScrollJourney() {
           {DAYS.map((day, i) => {
             if (Math.abs(i - activeValue) > RENDER_WINDOW) return null;
             return (
-              <StackCard key={day.day} day={day} index={i} activeIndex={activeIndex} activeValue={activeValue} />
+              <StackCard key={day.day} day={day} index={i} activeIndex={activeIndex} activeValue={activeValue} isMobile={isMobile} />
             );
           })}
         </div>
