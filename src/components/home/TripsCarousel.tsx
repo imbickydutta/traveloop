@@ -38,7 +38,9 @@ function cardX(offset: number, d: Dims): number {
 export default function TripsCarousel({ trips }: Props) {
   const [active, setActive] = useState(0);
   const [dims, setDims] = useState<Dims>({ activeW: 360, sideW: 260, spacing: 334 });
-  const pauseUntil = useRef(0);
+  const pauseUntil  = useRef(0);
+  const hasHinted   = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const pointerStartX = useRef(0);
   const didDrag = useRef(false);
@@ -59,6 +61,28 @@ export default function TripsCarousel({ trips }: Props) {
     }, 5000);
     return () => clearInterval(interval);
   }, [trips.length]);
+
+  // Peek animation on first enter — mobile only
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || hasHinted.current) return;
+        if (window.innerWidth >= 768) return; // desktop has visible side cards already
+        hasHinted.current = true;
+        // Pause auto-scroll during hint
+        pauseUntil.current = Date.now() + 4000;
+        // After short settle delay, peek at card 1 then snap back
+        const t1 = setTimeout(() => setActive(1), 700);
+        const t2 = setTimeout(() => setActive(0), 1800);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+      },
+      { threshold: 0.6 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const n = trips.length;
   const goTo = (i: number) => {
@@ -90,7 +114,7 @@ export default function TripsCarousel({ trips }: Props) {
   };
 
   return (
-    <div className="select-none">
+    <div className="select-none" ref={containerRef}>
       {/* ── Card stage ── */}
       <div
         className="relative overflow-hidden cursor-grab active:cursor-grabbing"
