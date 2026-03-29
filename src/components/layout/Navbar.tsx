@@ -57,7 +57,7 @@ export default function Navbar() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
           {/* Logo — fades in as BrandReveal finishes its travel */}
-          <Link href="/" className="flex items-center gap-2 group" aria-label="ghoomo.world home">
+          <Link href="/" className="flex items-center gap-2 group" aria-label="ghoomo world home">
             <motion.span
               className="font-script text-white whitespace-nowrap"
               style={{ fontSize: "1.1rem", letterSpacing: "-0.01em" }}
@@ -69,7 +69,7 @@ export default function Navbar() {
                 duration: 0.22,
               }}
             >
-              gh<BlinkingOo subtle />mo.w<RotatingGlobe subtle />rld
+              gh<BlinkingOo subtle />mo w<RotatingGlobe subtle />rld
             </motion.span>
           </Link>
 

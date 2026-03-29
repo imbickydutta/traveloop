@@ -14,7 +14,7 @@ export const TRAVEL_DURATION = 0.75;
 
 const FONT_PX    = 21;
 const NAV_HEIGHT = 64;
-const APPROX_W   = 150;   // "ghoomo.world" approx width at 21px DM Sans Black
+const APPROX_W   = 150;   // "ghoomo world" approx width at 21px
 const APPROX_H   = 26;
 const HERO_TOP   = 96;    // px from viewport top (64px navbar + 32px gap)
 
@@ -83,8 +83,8 @@ export function RotatingGlobe({ subtle = false }: { subtle?: boolean }) {
       style={{
         display:       "inline-block",
         position:      "relative",
-        width:         "0.95em",
-        height:        "0.95em",
+        width:         "0.85em",
+        height:        "0.85em",
         verticalAlign: "middle",
         borderRadius:  "50%",
         overflow:      "hidden",
@@ -221,7 +221,7 @@ export default function BrandReveal({ hidden = false }: { hidden?: boolean }) {
         className="font-script text-white whitespace-nowrap select-none"
         style={{ fontSize: FONT_PX, letterSpacing: "-0.01em" }}
       >
-        gh<BlinkingOo />mo.w<RotatingGlobe />rld
+        gh<BlinkingOo />mo w<RotatingGlobe />rld
       </span>
     </motion.div>
   );
