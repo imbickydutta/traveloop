@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import BrandReveal, { BlinkingOo, TRAVEL_DURATION } from "@/components/home/BrandReveal";
+import BrandReveal, { BlinkingOo, RotatingGlobe, TRAVEL_DURATION } from "@/components/home/BrandReveal";
 
 const NAV_LINKS = [
   { label: "Website", href: "/" },
@@ -57,10 +57,10 @@ export default function Navbar() {
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
           {/* Logo — fades in as BrandReveal finishes its travel */}
-          <Link href="/" className="flex items-center gap-2 group" aria-label="TraveLoop home">
+          <Link href="/" className="flex items-center gap-2 group" aria-label="ghoomo.world home">
             <motion.span
-              className="text-xl font-black text-white whitespace-nowrap"
-              style={{ letterSpacing: "-0.025em" }}
+              className="font-script text-white whitespace-nowrap"
+              style={{ fontSize: "1.1rem", letterSpacing: "-0.01em" }}
               initial={{ opacity: 0 }}
               animate={{ opacity: brandVisible ? 1 : 0 }}
               transition={{
@@ -69,7 +69,7 @@ export default function Navbar() {
                 duration: 0.22,
               }}
             >
-              TraveL<BlinkingOo subtle />p
+              gh<BlinkingOo subtle />mo.w<RotatingGlobe subtle />rld
             </motion.span>
           </Link>
 

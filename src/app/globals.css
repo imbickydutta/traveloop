@@ -10,8 +10,6 @@
   --color-dark-700: #1a1a1a;
   --color-dark-600: #252525;
 
-  /* Fonts */
-  --font-display: var(--font-bebas);
 }
 
 * {
@@ -27,6 +25,10 @@ body {
   color: #ffffff;
   font-family: var(--font-sans), system-ui, sans-serif;
   overflow-x: hidden;
+}
+
+.font-script {
+  font-family: var(--font-script), cursive;
 }
 
 /* Custom scrollbar */

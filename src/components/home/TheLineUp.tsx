@@ -59,7 +59,7 @@ export default function TheLineUp() {
               </motion.p>
               <motion.h2
                 variants={item}
-                className="flex items-baseline gap-3 sm:block text-3xl sm:text-6xl font-black text-white leading-none tracking-tight"
+                className="flex items-baseline gap-3 sm:block text-3xl sm:text-6xl font-script font-bold text-white leading-none"
               >
                 {/* Mobile: "Upcoming Trips" sits inline beside heading */}
                 <span className="sm:hidden text-xs font-semibold tracking-[0.25em] uppercase text-[#00e676] self-center">

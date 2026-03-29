@@ -96,7 +96,7 @@ function StackCard({
           <p className="text-[12px] font-bold tracking-[0.25em] uppercase mb-2.5" style={{ color: "rgba(255,255,255,0.65)" }}>
             {day.location}
           </p>
-          <h3 className="font-black leading-[1.1] text-white mb-3"
+          <h3 className="font-script font-bold leading-[1.1] text-white mb-3"
             style={{ fontSize: "clamp(1.5rem, 5vh, 2rem)", textShadow: isMobile ? undefined : "0 2px 16px rgba(0,0,0,0.7)" }}>
             {day.title.split(" ").slice(0, -1).join(" ")}{" "}
             <span style={{ color: accent }} className="italic">
@@ -185,7 +185,7 @@ export default function TripScrollJourney({ days, accent }: TripScrollJourneyPro
         {/* Header */}
         <div className="absolute top-16 inset-x-0 z-[70] flex flex-col items-center pointer-events-none">
           <p className="text-[10px] font-bold tracking-[0.3em] uppercase mb-1" style={{ color: accent }}>Day-by-Day</p>
-          <h2 className="text-2xl sm:text-3xl font-black leading-none text-white">
+          <h2 className="text-2xl sm:text-3xl font-script font-bold leading-none text-white">
             The <span className="italic" style={{ color: accent }}>Journey</span>
           </h2>
         </div>

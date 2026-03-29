@@ -116,7 +116,7 @@ export default function TripPageTemplate({
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
               {heroLabel}
             </motion.p>
-            <motion.h1 className="text-5xl sm:text-7xl font-black leading-none tracking-tight mb-4"
+            <motion.h1 className="text-5xl sm:text-7xl font-script font-bold leading-none mb-4"
               initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45, duration: 0.7 }}>
               {heroTitle}
             </motion.h1>
@@ -167,7 +167,7 @@ export default function TripPageTemplate({
 
           <FadeUp className="mb-14 pt-10">
             <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-white/25 mb-2">Trip Details</p>
-            <h2 className="text-2xl sm:text-3xl font-black mb-8">
+            <h2 className="text-2xl sm:text-3xl font-script font-bold mb-8">
               What&apos;s <span className="italic" style={{ color: accent }}>Included</span>
             </h2>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -230,7 +230,7 @@ export default function TripPageTemplate({
           {slots?.afterInclusions}
 
           <FadeUp className="mb-14">
-            <h2 className="text-2xl sm:text-3xl font-black mb-6">
+            <h2 className="text-2xl sm:text-3xl font-script font-bold mb-6">
               Pricing & <span className="italic" style={{ color: accent }}>Booking</span>
             </h2>
             <div className="rounded-2xl p-6 sm:p-8 mb-6" style={{ background: tint, border: `1px solid ${accent}30` }}>

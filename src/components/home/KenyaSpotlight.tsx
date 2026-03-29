@@ -238,7 +238,7 @@ export default function KenyaSpotlight() {
               </p>
 
               <h2
-                className="font-black text-white leading-none tracking-tight mb-1.5"
+                className="font-script font-bold text-white leading-none mb-1.5"
                 style={{ fontSize: "clamp(2rem, 4vw, 2.6rem)" }}
               >
                 Kenya{" "}
@@ -264,7 +264,7 @@ export default function KenyaSpotlight() {
                 <p className="text-[9px] font-bold tracking-[0.2em] uppercase mb-1" style={{ color: "rgba(255,255,255,0.3)" }}>
                   Per Pax
                 </p>
-                <p className="font-black" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.2rem)", color: ACCENT }}>
+                <p className="font-script font-bold" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.2rem)", color: ACCENT }}>
                   ₹65,000
                 </p>
               </div>

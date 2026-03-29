@@ -175,7 +175,7 @@ function TripCard({
                   style={{ color: "rgba(255,255,255,0.3)" }}>
                   {trip.destination}
                 </p>
-                <h2 className="font-black text-white leading-[1.0] tracking-tight"
+                <h2 className="font-script font-bold text-white leading-[1.1]"
                   style={{ fontSize: "clamp(1.5rem, 3vw, 2.6rem)" }}>
                   {nameMain}{" "}
                   <span className="italic" style={{ color: accent }}>{nameLast}</span>
@@ -221,7 +221,7 @@ function TripCard({
                 Trip Price
               </p>
               <div className="flex items-baseline gap-3">
-                <p className="font-black leading-none" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: accent }}>
+                <p className="font-script font-bold leading-none" style={{ fontSize: "clamp(1.5rem, 2.5vw, 2.2rem)", color: accent }}>
                   {formatINR(displayPrice)}
                 </p>
                 {(trip.earlyBirdPercent ?? 0) > 0 && (

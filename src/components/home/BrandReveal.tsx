@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 
 function useIsMobile() {
   const [mobile, setMobile] = useState(false);
@@ -14,7 +14,7 @@ export const TRAVEL_DURATION = 0.75;
 
 const FONT_PX    = 21;
 const NAV_HEIGHT = 64;
-const APPROX_W   = 114;   // "TraveLoop" approx width at 21px Inter Black
+const APPROX_W   = 150;   // "ghoomo.world" approx width at 21px DM Sans Black
 const APPROX_H   = 26;
 const HERO_TOP   = 96;    // px from viewport top (64px navbar + 32px gap)
 
@@ -65,6 +65,71 @@ export function BlinkingOo({ subtle = false }: { subtle?: boolean }) {
         transition={{ duration: subtle ? 3 : 2, repeat: Infinity, ease: "linear" }}
       />
     </svg>
+  );
+}
+
+/* ── Rotating Globe — replaces the "o" in ".world" ──────────────────────── */
+export function RotatingGlobe({ subtle = false }: { subtle?: boolean }) {
+  const uid = useId().replace(/:/g, "");
+  const ids = {
+    limb: `gl${uid}`,
+    spec: `gs${uid}`,
+    atm : `ga${uid}`,
+  };
+
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        display:       "inline-block",
+        position:      "relative",
+        width:         "0.95em",
+        height:        "0.95em",
+        verticalAlign: "middle",
+        borderRadius:  "50%",
+        overflow:      "hidden",
+        flexShrink:    0,
+      }}
+    >
+      {/* Rotating Earth GIF */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/rotating-earth.gif"
+        alt=""
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+      />
+
+      {/* Shiny overlay — limb darkening + atmospheric rim + specular highlight */}
+      <svg
+        viewBox="0 0 24 24" fill="none"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      >
+        <defs>
+          {/* Limb darkening — edges fade to black for 3-D roundness */}
+          <radialGradient id={ids.limb} cx="50%" cy="50%" r="50%">
+            <stop offset="60%"  stopColor="black" stopOpacity="0"    />
+            <stop offset="100%" stopColor="black" stopOpacity="0.75" />
+          </radialGradient>
+
+          {/* Atmospheric rim — blue glow at the edge like from orbit */}
+          <radialGradient id={ids.atm} cx="50%" cy="50%" r="50%">
+            <stop offset="76%"  stopColor="transparent" />
+            <stop offset="92%"  stopColor="#5ab0ff" stopOpacity={subtle ? 0.28 : 0.55} />
+            <stop offset="100%" stopColor="#88c8ff" stopOpacity="0" />
+          </radialGradient>
+
+          {/* Specular highlight — sun glint top-left */}
+          <radialGradient id={ids.spec} cx="33%" cy="27%" r="36%">
+            <stop offset="0%"   stopColor="white" stopOpacity={subtle ? 0.22 : 0.48} />
+            <stop offset="100%" stopColor="white" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        <circle cx="12" cy="12" r="12" fill={`url(#${ids.limb})`} />
+        <circle cx="12" cy="12" r="12" fill={`url(#${ids.atm})`}  />
+        <circle cx="12" cy="12" r="12" fill={`url(#${ids.spec})`} />
+      </svg>
+    </span>
   );
 }
 
@@ -153,10 +218,10 @@ export default function BrandReveal({ hidden = false }: { hidden?: boolean }) {
       }}
     >
       <span
-        className="font-black text-white whitespace-nowrap select-none"
-        style={{ fontSize: FONT_PX, letterSpacing: "-0.025em" }}
+        className="font-script text-white whitespace-nowrap select-none"
+        style={{ fontSize: FONT_PX, letterSpacing: "-0.01em" }}
       >
-        TraveL<BlinkingOo />p
+        gh<BlinkingOo />mo.w<RotatingGlobe />rld
       </span>
     </motion.div>
   );
