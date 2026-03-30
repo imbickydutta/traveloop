@@ -16,6 +16,9 @@ const comfortaa = Comfortaa({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL ?? "https://ghoomo.world"
+  ),
   title: {
     default: "ghoomo world — Group Travel, Full Vibe",
     template: "%s | ghoomo world",
