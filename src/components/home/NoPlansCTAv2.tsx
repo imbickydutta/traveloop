@@ -54,7 +54,7 @@ export default function NoPlansCTAv2() {
 
   return (
     <>
-      <section className="relative h-[100dvh] sm:min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden snap-start px-4">
+      <section className="relative h-[100dvh] sm:min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden snap-start px-4 pt-16 sm:pt-0">
 
         {/* ── Background ── */}
         <div className="absolute inset-0 pointer-events-none" style={{
@@ -74,7 +74,7 @@ export default function NoPlansCTAv2() {
 
         {/* ── Section heading ── */}
         <motion.div
-          className="relative text-center mb-6 sm:mb-14"
+          className="relative text-center mb-4 sm:mb-14"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
@@ -83,11 +83,11 @@ export default function NoPlansCTAv2() {
           <p className="text-[10px] sm:text-xs font-bold tracking-[0.28em] uppercase text-[#00e676] mb-2 sm:mb-3">
             Custom Trips
           </p>
-          <h2 className="text-4xl sm:text-6xl font-script font-bold text-white leading-none">
+          <h2 className="text-3xl sm:text-6xl font-script font-bold text-white leading-none">
             No Plans{" "}
             <span className="italic text-[#00e676]">Yet?</span>
           </h2>
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-white/45 font-medium">
+          <p className="mt-2 sm:mt-4 text-xs sm:text-base text-white/45 font-medium">
             Every great journey starts with a single conversation.
           </p>
         </motion.div>
@@ -113,7 +113,7 @@ export default function NoPlansCTAv2() {
               }}
             >
               {/* Top stub */}
-              <div className="p-6 flex flex-col gap-5">
+              <div className="p-5 flex flex-col gap-3.5">
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-script font-bold text-white text-base tracking-wide leading-none">ghoomo world</p>
@@ -126,7 +126,7 @@ export default function NoPlansCTAv2() {
                 </div>
 
                 {/* Route — vertical with slot animation */}
-                <div className="flex flex-col items-start gap-3">
+                <div className="flex flex-col items-start gap-2">
                   <div>
                     <p className="text-[9px] font-bold tracking-[0.22em] uppercase text-white/35 mb-0.5">From</p>
                     <p className="text-2xl font-black text-white tracking-tight leading-none">Your Doorstep</p>
@@ -173,7 +173,7 @@ export default function NoPlansCTAv2() {
               </div>
 
               {/* Bottom stub — CTA */}
-              <div className="p-6 flex flex-col items-center gap-4"
+              <div className="p-5 flex flex-col items-center gap-3"
                 style={{ background: "linear-gradient(180deg, rgba(0,230,118,0.07) 0%, rgba(0,212,170,0.04) 100%)" }}>
                 <div className="w-11 h-11 rounded-full flex items-center justify-center"
                   style={{ background: "rgba(0,230,118,0.12)", border: "1px solid rgba(0,230,118,0.25)" }}>
@@ -307,7 +307,7 @@ export default function NoPlansCTAv2() {
 
         {/* Bottom hint */}
         <motion.p
-          className="relative mt-6 sm:mt-10 text-[10px] sm:text-xs text-white/25 font-medium tracking-wide text-center"
+          className="relative mt-3 sm:mt-10 text-[10px] sm:text-xs text-white/25 font-medium tracking-wide text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
