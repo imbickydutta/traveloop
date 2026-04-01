@@ -54,7 +54,7 @@ export default function NoPlansCTAv2() {
 
   return (
     <>
-      <section className="relative h-[100dvh] sm:min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden snap-start px-4 pt-16 sm:pt-0">
+      <section className="relative h-[100dvh] sm:min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden snap-start px-4 pt-16 pb-6 sm:pt-0 sm:pb-0">
 
         {/* ── Background ── */}
         <div className="absolute inset-0 pointer-events-none" style={{
@@ -184,6 +184,11 @@ export default function NoPlansCTAv2() {
                 <div className="text-center">
                   <p className="text-sm font-bold text-white leading-snug">Not sure where to go?</p>
                   <p className="text-xs text-white/45 mt-1.5 leading-relaxed">Tell us your vibe. We'll craft the rest.</p>
+                  <div className="mt-2.5 pt-2.5 border-t border-white/8 flex flex-wrap justify-center gap-x-2 gap-y-1">
+                    {["Group trips", "Honeymoons", "Family holidays", "Solo adventures"].map((t) => (
+                      <span key={t} className="text-[9px] font-semibold tracking-wide text-white/30">{t}</span>
+                    ))}
+                  </div>
                 </div>
                 <button
                   onClick={() => setModalOpen(true)}
@@ -307,7 +312,7 @@ export default function NoPlansCTAv2() {
 
         {/* Bottom hint */}
         <motion.p
-          className="relative mt-3 sm:mt-10 text-[10px] sm:text-xs text-white/25 font-medium tracking-wide text-center"
+          className="relative hidden sm:block mt-10 text-xs text-white/25 font-medium tracking-wide text-center"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
