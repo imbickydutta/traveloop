@@ -41,7 +41,7 @@ export const TRIPS: Trip[] = [
     durationShort: "9D · 8N",
     pricePerPaxINR: 65000,
     earlyBirdPercent: 0,
-    attractions: ["Maasai Mara", "Amboseli", "Lake Nakuru"],
+    attractions: ["Maasai Mara", "Amboseli", "Lake Nakuru", "Hell's Gate"],
     status: "filling-fast",
     type: "group",
     accentColor: "#00e676",
