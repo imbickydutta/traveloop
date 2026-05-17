@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, Comfortaa } from "next/font/google";
 import "./globals.css";
+import FloatingWhatsAppButton from "@/components/shared/FloatingWhatsAppButton";
 
 const outfit = Outfit({
   variable: "--font-sans",
@@ -52,7 +53,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${outfit.variable} ${comfortaa.variable} h-full`}>
-      <body className="min-h-full flex flex-col antialiased bg-[#0a0a0a]">{children}</body>
+      <body className="min-h-full flex flex-col antialiased bg-[#0a0a0a]">
+        {children}
+        <FloatingWhatsAppButton />
+      </body>
     </html>
   );
 }

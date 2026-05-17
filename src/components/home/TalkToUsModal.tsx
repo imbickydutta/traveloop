@@ -1,32 +1,62 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "@phosphor-icons/react";
+import { X, CheckCircle } from "@phosphor-icons/react";
 import { Trip } from "@/types/trip";
+import { createLead, type LeadTravellerType, type LeadSource } from "@/lib/api/leads";
 
-const WHATSAPP_NUMBER = "919999999999"; // replace with real number
+const WHATSAPP_NUMBER = "917001347896";
+const DEFAULT_ACCENT = "#00e676"; // brand green for non-trip-specific use
 
 interface Props {
-  trip: Trip;
+  /** When omitted (e.g. floating button), the modal switches to a general-inquiry mode. */
+  trip?: Trip;
+  source?: LeadSource;
   onClose: () => void;
 }
 
 const TRAVELLER_OPTIONS = [1, 2, 3, 4, 5];
+const TRAVELLER_TYPES: { value: LeadTravellerType; label: string }[] = [
+  { value: "solo",   label: "Solo"   },
+  { value: "couple", label: "Couple" },
+  { value: "group",  label: "Group"  },
+  { value: "family", label: "Family" },
+];
 
-export default function TalkToUsModal({ trip, onClose }: Props) {
+type Status = "idle" | "submitting" | "success" | "error";
+
+export default function TalkToUsModal({ trip, source, onClose }: Props) {
+  const accent = trip?.accentColor ?? DEFAULT_ACCENT;
+  const resolvedSource: LeadSource = source ?? "talk_to_us";
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [travellerType, setTravellerType] = useState<LeadTravellerType>("solo");
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
   const [travellers, setTravellers] = useState(2);
   const [message, setMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Build the default message whenever traveller count changes
+  // Build the default message whenever traveller count or trip changes
   useEffect(() => {
-    setMessage(
-      `Hi! I'm interested in the *${trip.name}* trip.\n` +
-        `📅 Dates: ${trip.dateDisplay} (${trip.durationShort})\n` +
-        `👥 Group size: ${travellers} traveller${travellers > 1 ? "s" : ""}\n\n` +
-        `Could you share the full itinerary and availability? Thanks!`
-    );
+    if (trip) {
+      setMessage(
+        `Hi! I'm interested in the *${trip.name}* trip.\n` +
+          `📅 Dates: ${trip.dateDisplay} (${trip.durationShort})\n` +
+          `👥 Group size: ${travellers} traveller${travellers > 1 ? "s" : ""}\n\n` +
+          `Could you share the full itinerary and availability? Thanks!`
+      );
+    } else {
+      setMessage(
+        `Hi! I'd like to know more about your upcoming trips.\n` +
+          `👥 Group size: ${travellers} traveller${travellers > 1 ? "s" : ""}\n\n` +
+          `Could you share what's available? Thanks!`
+      );
+    }
   }, [trip, travellers]);
 
   // Close on Escape
@@ -38,16 +68,64 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  const openWhatsApp = () => {
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  // Lock page scroll while the modal is open — otherwise touch-scrolling the
+  // modal bubbles up and scrolls the page, which the Navbar treats as the user
+  // returning to the top and un-collapses the brand reveal. The home page's
+  // scroll container is <main>, not <body>, so we lock both.
+  useEffect(() => {
+    const mainEl = document.querySelector("main") as HTMLElement | null;
+    const prevMain = mainEl?.style.overflow ?? "";
+    const prevBody = document.body.style.overflow;
+    if (mainEl) mainEl.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      if (mainEl) mainEl.style.overflow = prevMain;
+      document.body.style.overflow = prevBody;
+    };
+  }, []);
+
+  const phoneDigits = phone.replace(/\D/g, "");
+  const canSubmit =
+    name.trim().length > 0 && phoneDigits.length >= 10 && status !== "submitting";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setStatus("submitting");
+    setErrorMsg("");
+    try {
+      await createLead({
+        name: name.trim(),
+        phone: phone.trim(),
+        travellerType,
+        ...(trip ? { tripInterested: trip.slug } : {}),
+        source: resolvedSource,
+      });
+      setStatus("success");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Submission failed");
+      setStatus("error");
+    }
+  };
+
+  const openWhatsAppFallback = () => {
+    const text = trip
+      ? `Hi, I'm interested in ${trip.name}`
+      : "Hi, I'd like to know about your trips";
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  return (
+  // Portal target only exists on the client — defer until mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const modal = (
     <AnimatePresence>
       {/* Backdrop */}
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center px-4"
+        className="fixed inset-0 z-[70] flex items-end justify-center px-0 sm:items-center sm:px-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -59,7 +137,7 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
 
         {/* Modal card */}
         <motion.div
-          className="relative w-full max-w-sm z-10"
+          className="relative w-full max-w-none sm:max-w-sm z-10"
           initial={{ opacity: 0, scale: 0.94, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.94, y: 16 }}
@@ -67,7 +145,7 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
           onClick={(e) => e.stopPropagation()}
         >
           <div
-            className="rounded-2xl overflow-hidden"
+            className="rounded-t-2xl sm:rounded-2xl overflow-hidden flex flex-col max-h-[90dvh] sm:max-h-[90vh]"
             style={{
               background: "#1a1a1a",
               border: "1px solid rgba(255,255,255,0.1)",
@@ -76,19 +154,21 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
           >
             {/* Header */}
             <div
-              className="flex items-start justify-between px-5 pt-5 pb-4"
+              className="flex items-start justify-between px-5 pt-5 pb-4 flex-shrink-0"
               style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
             >
               <div>
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 mb-1">
-                  Plan Your Trip
+                  {trip ? "Plan Your Trip" : "Talk To Us"}
                 </p>
                 <h3 className="text-white font-black text-lg leading-tight">
-                  {trip.name}
+                  {trip ? trip.name : "Get in touch"}
                 </h3>
-                <p className="text-white/40 text-xs mt-0.5">
-                  {trip.dateDisplay} · {trip.durationShort}
-                </p>
+                {trip && (
+                  <p className="text-white/40 text-xs mt-0.5">
+                    {trip.dateDisplay} · {trip.durationShort}
+                  </p>
+                )}
               </div>
               <button
                 onClick={onClose}
@@ -100,85 +180,250 @@ export default function TalkToUsModal({ trip, onClose }: Props) {
             </div>
 
             {/* Body */}
-            <div className="px-5 py-5 flex flex-col gap-5">
-              {/* Traveller count */}
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5">
-                  How many travellers?
-                </p>
-                <div className="flex gap-2">
-                  {TRAVELLER_OPTIONS.map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => setTravellers(n)}
-                      className="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200"
+            {status === "success" ? (
+              <div className="px-5 py-8 pb-[max(env(safe-area-inset-bottom),2rem)] sm:pb-8 flex flex-col items-center text-center gap-5 overflow-y-auto">
+                <CheckCircle size={56} weight="fill" color={accent} />
+                <div>
+                  <h4 className="text-white font-black text-base leading-tight">
+                    We&rsquo;ll WhatsApp you within the hour!
+                  </h4>
+                  <p className="text-white/40 text-xs mt-1.5">
+                    Hang tight — our team will reach out shortly.
+                  </p>
+                </div>
+                <button
+                  onClick={openWhatsAppFallback}
+                  className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                  style={{
+                    background: "#25d366",
+                    color: "#fff",
+                    boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
+                  }}
+                >
+                  <WhatsAppIcon />
+                  Message us directly
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="px-5 py-5 pb-[max(env(safe-area-inset-bottom),1.25rem)] sm:pb-5 flex flex-col gap-5 overflow-y-auto">
+                {/* Name */}
+                <div>
+                  <label
+                    htmlFor="lead-name"
+                    className="block text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5"
+                  >
+                    Name
+                  </label>
+                  <input
+                    id="lead-name"
+                    type="text"
+                    autoComplete="name"
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Your name"
+                    className="w-full text-sm text-white/90 rounded-xl px-4 py-3 outline-none transition-all"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      caretColor: accent,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = `${accent}55`;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${accent}15`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label
+                    htmlFor="lead-phone"
+                    className="block text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5"
+                  >
+                    Phone
+                  </label>
+                  <div className="flex">
+                    <span
+                      className="inline-flex items-center px-3 text-sm text-white/50 rounded-l-xl"
                       style={{
-                        background:
-                          travellers === n
-                            ? trip.accentColor
-                            : "rgba(255,255,255,0.05)",
-                        color: travellers === n ? "#000" : "rgba(255,255,255,0.5)",
-                        border:
-                          travellers === n
-                            ? `1px solid ${trip.accentColor}`
-                            : "1px solid rgba(255,255,255,0.08)",
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        borderRight: "none",
                       }}
                     >
-                      {n === 5 ? "5+" : n}
-                    </button>
-                  ))}
+                      +91
+                    </span>
+                    <input
+                      id="lead-phone"
+                      type="tel"
+                      autoComplete="tel"
+                      required
+                      inputMode="numeric"
+                      pattern="[6-9][0-9]{9}"
+                      maxLength={10}
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                      placeholder="98765 43210"
+                      className="flex-1 text-sm text-white/90 rounded-r-xl px-4 py-3 outline-none transition-all"
+                      style={{
+                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid rgba(255,255,255,0.08)",
+                        caretColor: accent,
+                      }}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = `${accent}55`;
+                        e.currentTarget.style.boxShadow = `0 0 0 3px ${accent}15`;
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                        e.currentTarget.style.boxShadow = "none";
+                      }}
+                    />
+                  </div>
                 </div>
-              </div>
 
-              {/* Message */}
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5">
-                  Your Message
-                </p>
-                <textarea
-                  ref={textareaRef}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={5}
-                  className="w-full resize-none text-sm text-white/80 leading-relaxed rounded-xl px-4 py-3 outline-none focus:ring-1 transition-all"
+                {/* Travelling as */}
+                <div>
+                  <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5">
+                    Travelling as
+                  </p>
+                  <div className="flex gap-2">
+                    {TRAVELLER_TYPES.map((opt) => {
+                      const selected = travellerType === opt.value;
+                      return (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => setTravellerType(opt.value)}
+                          className="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200"
+                          style={{
+                            background: selected
+                              ? accent
+                              : "rgba(255,255,255,0.05)",
+                            color: selected ? "#000" : "rgba(255,255,255,0.5)",
+                            border: selected
+                              ? `1px solid ${accent}`
+                              : "1px solid rgba(255,255,255,0.08)",
+                          }}
+                        >
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Traveller count */}
+                <div>
+                  <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5">
+                    How many travellers?
+                  </p>
+                  <div className="flex gap-2">
+                    {TRAVELLER_OPTIONS.map((n) => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => setTravellers(n)}
+                        className="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200"
+                        style={{
+                          background:
+                            travellers === n
+                              ? accent
+                              : "rgba(255,255,255,0.05)",
+                          color: travellers === n ? "#000" : "rgba(255,255,255,0.5)",
+                          border:
+                            travellers === n
+                              ? `1px solid ${accent}`
+                              : "1px solid rgba(255,255,255,0.08)",
+                        }}
+                      >
+                        {n === 5 ? "5+" : n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5">
+                    Your Message
+                  </p>
+                  <textarea
+                    ref={textareaRef}
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    rows={5}
+                    className="w-full resize-none text-sm text-white/80 leading-relaxed rounded-xl px-4 py-3 outline-none focus:ring-1 transition-all"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      caretColor: accent,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = `${accent}55`;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${accent}15`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                  <p className="text-[10px] text-white/25 mt-1.5">
+                    Feel free to edit this before sending.
+                  </p>
+                </div>
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                    caretColor: trip.accentColor,
+                    background: accent,
+                    color: "#000",
+                    boxShadow: `0 4px 20px ${accent}59`,
                   }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = `${trip.accentColor}55`;
-                    e.currentTarget.style.boxShadow = `0 0 0 3px ${trip.accentColor}15`;
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                    e.currentTarget.style.boxShadow = "none";
-                  }}
-                />
-                <p className="text-[10px] text-white/25 mt-1.5">
-                  Feel free to edit this before sending.
-                </p>
-              </div>
+                >
+                  {status === "submitting" ? "Sending…" : "Submit"}
+                </button>
 
-              {/* WhatsApp CTA */}
-              <button
-                onClick={openWhatsApp}
-                className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
-                style={{
-                  background: "#25d366",
-                  color: "#fff",
-                  boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
-                }}
-              >
-                <WhatsAppIcon />
-                Send on WhatsApp
-              </button>
-            </div>
+                {status === "error" && (
+                  <div className="flex flex-col gap-3 -mt-2">
+                    <p className="text-xs text-red-400 text-center">
+                      Something went wrong. Please WhatsApp us directly.
+                      {errorMsg && (
+                        <span className="block text-white/30 mt-1">{errorMsg}</span>
+                      )}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={openWhatsAppFallback}
+                      className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                      style={{
+                        background: "#25d366",
+                        color: "#fff",
+                        boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
+                      }}
+                    >
+                      <WhatsAppIcon />
+                      Message us directly
+                    </button>
+                  </div>
+                )}
+              </form>
+            )}
           </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
   );
+
+  return createPortal(modal, document.body);
 }
 
 function WhatsAppIcon() {

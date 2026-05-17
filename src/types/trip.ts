@@ -47,6 +47,7 @@ export interface Trip {
   slug: string;
   name: string;
   destination: string;
+  flag: string;
   tagline: string;
 
   /** Ordered list of images. images[0] is used as the cover / poster. */
@@ -55,6 +56,7 @@ export interface Trip {
 
   dateDisplay: string;
   durationShort: string;
+  month: string[];
 
   pricePerPaxINR: number;
   earlyBirdPercent?: number;

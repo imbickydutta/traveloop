@@ -161,14 +161,21 @@ export default function BrandReveal({ hidden = false }: { hidden?: boolean }) {
 
   /* ── toggle gone based on scroll position ──
      Uses capture so it fires even when a child element (e.g. <main>
-     with snap scroll) is the actual scroll container, not window. ── */
+     with snap scroll) is the actual scroll container, not window.
+     Filter to the real page scroll container — otherwise scrolls from
+     textareas, dropdowns, or any other scrollable element would feed
+     their scrollTop into this handler and flip the reveal incorrectly. ── */
   useEffect(() => {
     const onScroll = (e: Event) => {
       const t = e.target;
-      const scrollY =
-        t instanceof Element && t !== document.documentElement && t !== document.body
-          ? t.scrollTop
-          : window.scrollY;
+      let scrollY: number;
+      if (t === document || t === document.documentElement || t === document.body) {
+        scrollY = window.scrollY;
+      } else if (t instanceof HTMLElement && t.tagName === "MAIN") {
+        scrollY = t.scrollTop;
+      } else {
+        return; // Not the page scroll container — ignore.
+      }
       setGone(scrollY > 10);
     };
     document.addEventListener("scroll", onScroll, { passive: true, capture: true });

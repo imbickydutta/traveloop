@@ -5,56 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import TalkToUsModal from "./TalkToUsModal";
-import { TRIPS } from "@/data/trips";
+import Ticker from "@/components/shared/Ticker";
 import { Trip } from "@/types/trip";
-
-/* ── Seamless rAF ticker ── */
-function Ticker({ items, accent }: { items: string[]; accent: string }) {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const posRef   = useRef(0);
-  const rafRef   = useRef<number | null>(null);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const tick = () => {
-      posRef.current -= 0.55;
-      const half = track.scrollWidth / 2;
-      if (posRef.current <= -half) posRef.current += half;
-      track.style.transform = `translateX(${posRef.current}px)`;
-      rafRef.current = requestAnimationFrame(tick);
-    };
-    const onVis = () => {
-      if (document.hidden) {
-        if (rafRef.current) { cancelAnimationFrame(rafRef.current); rafRef.current = null; }
-      } else {
-        if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
-      }
-    };
-    document.addEventListener("visibilitychange", onVis);
-    rafRef.current = requestAnimationFrame(tick);
-    return () => {
-      document.removeEventListener("visibilitychange", onVis);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  const doubled = [...items, ...items];
-  return (
-    <div className="overflow-hidden w-full">
-      <div ref={trackRef} className="flex items-center will-change-transform whitespace-nowrap">
-        {doubled.map((item, i) => (
-          <span key={i} className="inline-flex items-center gap-2.5 pr-2.5">
-            <span className="text-[10px] font-black tracking-[0.22em] uppercase" style={{ color: accent }}>
-              {item}
-            </span>
-            <span style={{ color: `${accent}55`, fontSize: 5 }}>◆</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 /* ── Crossfade slideshow ── */
 function Slideshow({ images }: { images: string[] }) {
@@ -323,22 +275,22 @@ function DesktopTripPair({ pair, startIndex, total }: { pair: Trip[]; startIndex
   );
 }
 
-export default function FeaturedTrips() {
+export default function FeaturedTrips({ trips }: { trips: Trip[] }) {
   const pairs: Trip[][] = [];
-  for (let i = 0; i < TRIPS.length; i += 2) {
-    pairs.push(TRIPS.slice(i, i + 2));
+  for (let i = 0; i < trips.length; i += 2) {
+    pairs.push(trips.slice(i, i + 2));
   }
 
   return (
     <>
       {/* Mobile: one trip per snap section */}
-      {TRIPS.map((trip, i) => (
-        <TripSpotlight key={trip.id} trip={trip} index={i} total={TRIPS.length} />
+      {trips.map((trip, i) => (
+        <TripSpotlight key={trip.id} trip={trip} index={i} total={trips.length} />
       ))}
 
       {/* Desktop: two trips per snap section */}
       {pairs.map((pair, pi) => (
-        <DesktopTripPair key={pi} pair={pair} startIndex={pi * 2} total={TRIPS.length} />
+        <DesktopTripPair key={pi} pair={pair} startIndex={pi * 2} total={trips.length} />
       ))}
     </>
   );

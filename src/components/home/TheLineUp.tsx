@@ -1,9 +1,9 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { TRIPS } from "@/data/trips";
 import TripsCarousel from "./TripsCarousel";
 import StarfieldCanvas from "@/components/ui/StarfieldCanvas";
+import type { Trip } from "@/types/trip";
 
 
 const container: Variants = {
@@ -16,7 +16,7 @@ const item: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.9, ease: "easeOut" } },
 };
 
-export default function TheLineUp() {
+export default function TheLineUp({ trips }: { trips: Trip[] }) {
   return (
     <section id="lineup" className="relative h-[100dvh] sm:min-h-[100dvh] sm:py-28 flex flex-col justify-center overflow-hidden pt-16 pb-6 sm:py-28 snap-start">
 
@@ -85,7 +85,7 @@ export default function TheLineUp() {
 
         {/* ── Carousel ── */}
         <motion.div variants={item} className="relative overflow-hidden">
-          <TripsCarousel trips={TRIPS} />
+          <TripsCarousel trips={trips} />
         </motion.div>
 
         {/* ── Bottom CTA ── */}

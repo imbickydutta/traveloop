@@ -298,9 +298,14 @@ export default function TripPageTemplate({
             </div>
           </FadeUp>
 
-          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-white/25 hover:text-white/55 transition-colors">
-            <ArrowLeft size={12} weight="bold" /> Back to home
-          </Link>
+          <div className="flex flex-col items-start gap-2">
+            <Link href="/trips" className="inline-flex items-center gap-1.5 text-xs text-white/35 hover:text-white/70 transition-colors">
+              <ArrowLeft size={12} weight="bold" /> Browse all trips
+            </Link>
+            <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-white/25 hover:text-white/55 transition-colors">
+              <ArrowLeft size={12} weight="bold" /> Back to home
+            </Link>
+          </div>
         </div>
 
         {/* ── Sticky mobile CTA ── */}

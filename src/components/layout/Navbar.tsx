@@ -2,34 +2,53 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import BrandReveal, { BlinkingOo, RotatingGlobe, TRAVEL_DURATION } from "@/components/home/BrandReveal";
 
 const NAV_LINKS = [
   { label: "Website", href: "/" },
   { label: "Highlights", href: "/#highlights" },
-  { label: "Routes", href: "/#lineup" },
+  { label: "Trips", href: "/trips" },
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled]       = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [mobileOpen, setMobileOpen]   = useState(false);
-  // True once the user scrolls — syncs with BrandReveal's scroll trigger
-  const [brandVisible, setBrandVisible] = useState(false);
+  // On home: starts hidden, reveals once user scrolls past 10px (synced with BrandReveal).
+  // Off home: BrandReveal is suppressed, so the small navbar logo must show immediately.
+  const [brandVisible, setBrandVisible] = useState(!isHome);
 
   useEffect(() => {
+    // Sync state when navigating between home and other routes.
+    setBrandVisible(!isHome);
+  }, [isHome]);
+
+  useEffect(() => {
+    // Only the home page has a scroll-driven brand reveal. Off-home, the small
+    // logo is always shown, so we don't need (or want) to flip it on scroll.
+    if (!isHome) return;
+
     const onScroll = (e: Event) => {
       const t = e.target;
-      const scrollY =
-        t instanceof Element && t !== document.documentElement && t !== document.body
-          ? t.scrollTop
-          : window.scrollY;
-      setScrolled(scrollY > 60);
+      // Only respond to scrolls from the actual page scroll container — ignore
+      // scroll events from textareas, dropdowns, or any other scrollable
+      // element whose scrollTop would otherwise be treated as the page's.
+      let scrollY: number;
+      if (t === document || t === document.documentElement || t === document.body) {
+        scrollY = window.scrollY;
+      } else if (t instanceof HTMLElement && t.tagName === "MAIN") {
+        scrollY = t.scrollTop;
+      } else {
+        return;
+      }
       setBrandVisible(scrollY > 10);
     };
     document.addEventListener("scroll", onScroll, { passive: true, capture: true });
     return () => document.removeEventListener("scroll", onScroll, { capture: true });
-  }, []);
+  }, [isHome]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -39,8 +58,8 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ── Brand reveal — hidden when mobile menu is open ── */}
-      <BrandReveal hidden={mobileOpen} />
+      {/* ── Brand reveal — only animates on the home page ── */}
+      <BrandReveal hidden={mobileOpen || !isHome} />
 
       {/* ── Header — z-[65] so it always sits above the mobile overlay ── */}
       <motion.header
@@ -64,8 +83,9 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: brandVisible ? 1 : 0 }}
               transition={{
-                // mirror BrandReveal's crossfade: FADE_START = TRAVEL_DURATION - 0.22
-                delay:    brandVisible ? TRAVEL_DURATION - 0.22 : 0,
+                // mirror BrandReveal's crossfade on home; off-home the small
+                // logo should appear immediately (no animation handoff needed).
+                delay:    brandVisible && isHome ? TRAVEL_DURATION - 0.22 : 0,
                 duration: 0.22,
               }}
             >
@@ -91,7 +111,7 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             <a
-              href="https://wa.me/919999999999"
+              href="https://wa.me/917001347896"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-[#25d366] hover:bg-[#1ebe59] text-white text-sm font-semibold px-4 py-2 rounded-full transition-all duration-200 hover:shadow-[0_0_20px_rgba(37,211,102,0.4)]"
@@ -172,7 +192,7 @@ export default function Navbar() {
               transition={{ delay: 0.3 }}
             >
               <a
-                href="https://wa.me/919999999999"
+                href="https://wa.me/917001347896"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-[#25d366] text-white text-base font-semibold px-6 py-4 rounded-full w-full"

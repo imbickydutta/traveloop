@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "@phosphor-icons/react";
+import { X, CheckCircle } from "@phosphor-icons/react";
+import { createLead } from "@/lib/api/leads";
 
-const WHATSAPP_NUMBER = "919999999999";
+const WHATSAPP_NUMBER = "917001347896";
 
 const DESTINATIONS = [
-  { id: "egypt",     label: "Egypt",          flag: "🇪🇬", accent: "#e8b84b" },
-  { id: "kenya",     label: "Kenya",          flag: "🇰🇪", accent: "#00e676" },
-  { id: "bali",      label: "Bali",           flag: "🇮🇩", accent: "#00d4aa" },
-  { id: "thailand",  label: "Thailand",       flag: "🇹🇭", accent: "#f72585" },
-  { id: "new",       label: "Somewhere new",  flag: "✈️",  accent: "#a78bfa" },
-  { id: "unsure",    label: "Not sure yet",   flag: "🌍",  accent: "#94a3b8" },
+  { id: "egypt",     label: "Egypt",          flag: "🇪🇬", accent: "#e8b84b", slug: "egypt-vibes"    },
+  { id: "kenya",     label: "Kenya",          flag: "🇰🇪", accent: "#00e676", slug: "kenya-safari"   },
+  { id: "bali",      label: "Bali",           flag: "🇮🇩", accent: "#00d4aa", slug: "bali-vibes"     },
+  { id: "thailand",  label: "Thailand",       flag: "🇹🇭", accent: "#f72585", slug: "thailand-vibes" },
+  { id: "new",       label: "Somewhere new",  flag: "✈️",  accent: "#a78bfa", slug: ""               },
+  { id: "unsure",    label: "Not sure yet",   flag: "🌍",  accent: "#94a3b8", slug: ""               },
 ];
 
 const TRAVELLER_OPTIONS = [1, 2, 3, 4, 5] as const;
+
+type Status = "idle" | "submitting" | "success" | "error";
 
 interface Props {
   onClose: () => void;
@@ -50,9 +53,14 @@ function buildMessage(destId: string | null, travellers: number): string {
 }
 
 export default function PlanTripModal({ onClose }: Props) {
+  const [name, setName]             = useState("");
+  const [phone, setPhone]           = useState("");
   const [selected, setSelected]     = useState<string | null>(null);
   const [travellers, setTravellers] = useState(2);
   const [message, setMessage]       = useState(() => buildMessage(null, 2));
+
+  const [status, setStatus]   = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   // Rebuild message whenever selections change
   useEffect(() => {
@@ -68,6 +76,31 @@ export default function PlanTripModal({ onClose }: Props) {
 
   const activeDest   = DESTINATIONS.find((d) => d.id === selected);
   const accentColor  = activeDest?.accent ?? "#00e676";
+
+  const phoneDigits = phone.replace(/\D/g, "");
+  const canSubmit =
+    name.trim().length > 0 && phoneDigits.length >= 10 && status !== "submitting";
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canSubmit) return;
+    setStatus("submitting");
+    setErrorMsg("");
+    try {
+      await createLead({
+        name: name.trim(),
+        phone: phone.trim(),
+        ...(activeDest?.slug ? { tripInterested: activeDest.slug } : {}),
+        groupSize: travellers,
+        note: message,
+        source: "plan_trip",
+      });
+      setStatus("success");
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Submission failed");
+      setStatus("error");
+    }
+  };
 
   const openWhatsApp = () => {
     window.open(
@@ -130,7 +163,114 @@ export default function PlanTripModal({ onClose }: Props) {
             </div>
 
             {/* ── Body ── */}
-            <div className="px-5 py-5 flex flex-col gap-5">
+            {status === "success" ? (
+              <div className="px-5 py-8 flex flex-col items-center text-center gap-5">
+                <CheckCircle size={56} weight="fill" color={accentColor} />
+                <div>
+                  <h4 className="text-white font-black text-base leading-tight">
+                    We&rsquo;ll WhatsApp you within the hour!
+                  </h4>
+                  <p className="text-white/40 text-xs mt-1.5">
+                    Hang tight — our team will reach out shortly.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={openWhatsApp}
+                  className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                  style={{
+                    background: "#25d366",
+                    color: "#fff",
+                    boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
+                  }}
+                >
+                  <WhatsAppIcon />
+                  Message us directly
+                </button>
+              </div>
+            ) : (
+            <form onSubmit={handleSubmit} className="px-5 py-5 flex flex-col gap-5">
+
+              {/* Name */}
+              <div>
+                <label
+                  htmlFor="plan-name"
+                  className="block text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5"
+                >
+                  Name
+                </label>
+                <input
+                  id="plan-name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your name"
+                  className="w-full text-sm text-white/90 rounded-xl px-4 py-3 outline-none transition-all"
+                  style={{
+                    background: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    caretColor: accentColor,
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.borderColor = `${accentColor}55`;
+                    e.currentTarget.style.boxShadow = `0 0 0 3px ${accentColor}12`;
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label
+                  htmlFor="plan-phone"
+                  className="block text-[10px] font-bold tracking-[0.18em] uppercase text-white/40 mb-2.5"
+                >
+                  Phone
+                </label>
+                <div className="flex">
+                  <span
+                    className="inline-flex items-center px-3 text-sm text-white/50 rounded-l-xl"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      borderRight: "none",
+                    }}
+                  >
+                    +91
+                  </span>
+                  <input
+                    id="plan-phone"
+                    type="tel"
+                    autoComplete="tel"
+                    required
+                    inputMode="numeric"
+                    pattern="[6-9][0-9]{9}"
+                    maxLength={10}
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                    placeholder="98765 43210"
+                    className="flex-1 text-sm text-white/90 rounded-r-xl px-4 py-3 outline-none transition-all"
+                    style={{
+                      background: "rgba(255,255,255,0.04)",
+                      border: "1px solid rgba(255,255,255,0.08)",
+                      caretColor: accentColor,
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = `${accentColor}55`;
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${accentColor}12`;
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+              </div>
 
               {/* Destination selector */}
               <div>
@@ -143,6 +283,7 @@ export default function PlanTripModal({ onClose }: Props) {
                     return (
                       <button
                         key={dest.id}
+                        type="button"
                         onClick={() => setSelected(isActive ? null : dest.id)}
                         className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl text-center transition-all duration-200 active:scale-95"
                         style={{
@@ -177,6 +318,7 @@ export default function PlanTripModal({ onClose }: Props) {
                     return (
                       <button
                         key={n}
+                        type="button"
                         onClick={() => setTravellers(n)}
                         className="flex-1 py-2 rounded-xl text-sm font-bold transition-all duration-200"
                         style={{
@@ -223,20 +365,45 @@ export default function PlanTripModal({ onClose }: Props) {
                 </p>
               </div>
 
-              {/* WhatsApp CTA */}
+              {/* Submit */}
               <button
-                onClick={openWhatsApp}
-                className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                type="submit"
+                disabled={!canSubmit}
+                className="flex items-center justify-center gap-2.5 w-full py-4 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                 style={{
-                  background: "#25d366",
-                  color: "#fff",
-                  boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
+                  background: accentColor,
+                  color: "#000",
+                  boxShadow: `0 4px 20px ${accentColor}59`,
                 }}
               >
-                <WhatsAppIcon />
-                Send on WhatsApp
+                {status === "submitting" ? "Sending…" : "Submit"}
               </button>
-            </div>
+
+              {status === "error" && (
+                <div className="flex flex-col gap-3 -mt-2">
+                  <p className="text-xs text-red-400 text-center">
+                    Something went wrong. Please WhatsApp us directly.
+                    {errorMsg && (
+                      <span className="block text-white/30 mt-1">{errorMsg}</span>
+                    )}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={openWhatsApp}
+                    className="flex items-center justify-center gap-2.5 w-full py-3.5 rounded-xl font-bold text-sm tracking-wide transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                    style={{
+                      background: "#25d366",
+                      color: "#fff",
+                      boxShadow: "0 4px 20px rgba(37,211,102,0.35)",
+                    }}
+                  >
+                    <WhatsAppIcon />
+                    Message us directly
+                  </button>
+                </div>
+              )}
+            </form>
+            )}
           </div>
         </motion.div>
       </motion.div>
