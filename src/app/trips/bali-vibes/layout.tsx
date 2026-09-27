@@ -5,15 +5,15 @@ export const metadata: Metadata = {
   description:
     "Temples, rice terraces, island escapes and sunsets that melt into the horizon — 8 days in Bali from ₹55,000 per person.",
   openGraph: {
-    title: "Bali Vibes — ghoomo world",
+    title: "Bali Vibes — Bidesh and Beyond",
     description:
       "8 days in Bali: Ubud, Nusa Penida & Tanah Lot. Temples, rice terraces & island sunsets. Group trip from ₹55,000.",
     type: "website",
-    siteName: "ghoomo world",
+    siteName: "Bidesh and Beyond",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bali Vibes — ghoomo world",
+    title: "Bali Vibes — Bidesh and Beyond",
     description: "8 days in Bali: temples, rice terraces & sunsets. Group trip from ₹55,000.",
   },
 };

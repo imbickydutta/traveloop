@@ -64,3 +64,15 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Trip calendar — lane row height for stacked overlapping trips.
+   Row count comes from --lane-count (set per week); height shrinks
+   on mobile where bars drop their text and become slim stripes. */
+.trip-week {
+  grid-template-rows: auto repeat(var(--lane-count, 1), 22px);
+}
+@media (max-width: 640px) {
+  .trip-week {
+    grid-template-rows: auto repeat(var(--lane-count, 1), 10px);
+  }
+}

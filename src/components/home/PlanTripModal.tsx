@@ -22,12 +22,23 @@ type Status = "idle" | "submitting" | "success" | "error";
 
 interface Props {
   onClose: () => void;
+  /** Pre-fills the message when the modal is opened from a "we don't have that
+   *  destination yet" search CTA — names what the visitor was looking for. */
+  initialQuery?: string;
 }
 
-function buildMessage(destId: string | null, travellers: number): string {
+function buildMessage(destId: string | null, travellers: number, customQuery?: string): string {
   const dest = DESTINATIONS.find((d) => d.id === destId);
   const t = travellers === 5 ? "5+" : String(travellers);
   const plural = travellers === 1 ? "traveller" : "travellers";
+
+  if (!destId && customQuery) {
+    return (
+      `Hi! 👋 I searched for *${customQuery}* but didn't see it in your trips — I'd love a custom itinerary there.\n` +
+      `👥 Travelling with: ${t} ${plural}\n\n` +
+      `Could you help me put together a trip? Thanks!`
+    );
+  }
 
   if (!destId || destId === "unsure") {
     return (
@@ -52,20 +63,21 @@ function buildMessage(destId: string | null, travellers: number): string {
   );
 }
 
-export default function PlanTripModal({ onClose }: Props) {
+export default function PlanTripModal({ onClose, initialQuery }: Props) {
   const [name, setName]             = useState("");
   const [phone, setPhone]           = useState("");
   const [selected, setSelected]     = useState<string | null>(null);
   const [travellers, setTravellers] = useState(2);
-  const [message, setMessage]       = useState(() => buildMessage(null, 2));
+  const [message, setMessage]       = useState(() => buildMessage(null, 2, initialQuery));
 
   const [status, setStatus]   = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // Rebuild message whenever selections change
+  // Rebuild message whenever selections change. Once the visitor picks one of
+  // the destination chips, that takes over from the search-query prefill.
   useEffect(() => {
-    setMessage(buildMessage(selected, travellers));
-  }, [selected, travellers]);
+    setMessage(buildMessage(selected, travellers, selected ? undefined : initialQuery));
+  }, [selected, travellers, initialQuery]);
 
   // Close on Escape
   useEffect(() => {
@@ -150,7 +162,9 @@ export default function PlanTripModal({ onClose }: Props) {
                   Plan Your Escape
                 </h3>
                 <p className="text-white/35 text-xs mt-0.5">
-                  Tell us where you want to go
+                  {initialQuery
+                    ? `We don't have "${initialQuery}" yet — let's plan it`
+                    : "Tell us where you want to go"}
                 </p>
               </div>
               <button

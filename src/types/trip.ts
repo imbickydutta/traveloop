@@ -55,6 +55,9 @@ export interface Trip {
   videoUrl?: string;
 
   dateDisplay: string;
+  /** ISO date strings — the machine-readable range dateDisplay describes. */
+  startDate: string;
+  endDate: string;
   durationShort: string;
   month: string[];
 

@@ -5,15 +5,15 @@ export const metadata: Metadata = {
   description:
     "Pyramids, Nile cruises & the Red Sea — 11 days through the greatest civilisation ever known. Join our group trip from ₹95,000 per person.",
   openGraph: {
-    title: "Egypt Vibes — ghoomo world",
+    title: "Egypt Vibes — Bidesh and Beyond",
     description:
       "11 days through ancient Egypt: Pyramids of Giza, Nile Cruise, Abu Simbel & the Red Sea. Group trip from ₹95,000.",
     type: "website",
-    siteName: "ghoomo world",
+    siteName: "Bidesh and Beyond",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Egypt Vibes — ghoomo world",
+    title: "Egypt Vibes — Bidesh and Beyond",
     description: "11 days through ancient Egypt. Group trip from ₹95,000.",
   },
 };

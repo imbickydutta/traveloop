@@ -5,15 +5,15 @@ export const metadata: Metadata = {
   description:
     "Bangkok, Pattaya, Krabi & Phi Phi Islands — 9 days of temples, street food, beaches and paradise. Group trip from ₹72,000 per person.",
   openGraph: {
-    title: "Thailand Vibes — ghoomo world",
+    title: "Thailand Vibes — Bidesh and Beyond",
     description:
       "9 days in Thailand: Bangkok, Pattaya, Krabi & Phi Phi Islands. Temples, beaches & paradise vibes. Group trip from ₹72,000.",
     type: "website",
-    siteName: "ghoomo world",
+    siteName: "Bidesh and Beyond",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Thailand Vibes — ghoomo world",
+    title: "Thailand Vibes — Bidesh and Beyond",
     description: "9 days in Thailand: temples, beaches & paradise islands. Group trip from ₹72,000.",
   },
 };

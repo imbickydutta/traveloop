@@ -116,12 +116,12 @@ export default function NoPlansCTAv2() {
               <div className="p-5 flex flex-col gap-3.5">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-script font-bold text-white text-base tracking-wide leading-none">ghoomo world</p>
+                    <p className="font-script font-bold text-white text-base tracking-wide leading-none">Bidesh and Beyond</p>
                     <p className="text-[9px] font-bold tracking-[0.2em] uppercase text-white/35 mt-0.5">Custom Escape</p>
                   </div>
                   <div className="text-right">
                     <p className="text-[9px] font-bold tracking-[0.18em] uppercase text-white/35">Boarding Pass</p>
-                    <p className="text-[11px] font-bold text-white/55 font-mono mt-0.5">#GW-000001</p>
+                    <p className="text-[11px] font-bold text-white/55 font-mono mt-0.5">#BB-000001</p>
                   </div>
                 </div>
 
@@ -220,12 +220,12 @@ export default function NoPlansCTAv2() {
               <div className="flex-1 min-w-0 p-10 flex flex-col gap-6">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="font-script font-bold text-white text-lg tracking-wide leading-none">ghoomo world</p>
+                    <p className="font-script font-bold text-white text-lg tracking-wide leading-none">Bidesh and Beyond</p>
                     <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/35 mt-0.5">Custom Escape</p>
                   </div>
                   <div className="text-right">
                     <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/35">Boarding Pass</p>
-                    <p className="text-sm font-bold text-white/55 font-mono">#GW-000001</p>
+                    <p className="text-sm font-bold text-white/55 font-mono">#BB-000001</p>
                   </div>
                 </div>
 

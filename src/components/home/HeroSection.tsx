@@ -85,7 +85,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/65" />
 
       {/* Main content */}
-      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[145px] sm:pt-[200px] md:pt-[220px]">
+      <div className="relative z-10 flex-1 flex flex-col items-center px-4 sm:px-6 text-center pt-[185px] sm:pt-[215px] md:pt-[235px]">
 
         {/* Product description */}
         <motion.p

@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import BrandReveal, { BlinkingOo, RotatingGlobe, TRAVEL_DURATION } from "@/components/home/BrandReveal";
+import BrandReveal from "@/components/home/BrandReveal";
 
 const NAV_LINKS = [
   { label: "Website", href: "/" },
@@ -75,21 +76,27 @@ export default function Navbar() {
       >
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
 
-          {/* Logo — fades in as BrandReveal finishes its travel */}
-          <Link href="/" className="flex items-center gap-2 group" aria-label="ghoomo world home">
+          {/* Logo — fades in once BrandReveal's hero logo fades out */}
+          <Link href="/" className="flex items-center gap-2 group" aria-label="Bidesh and Beyond home">
             <motion.span
-              className="font-script text-white whitespace-nowrap"
-              style={{ fontSize: "1.1rem", letterSpacing: "-0.01em" }}
+              className="flex items-center gap-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: brandVisible ? 1 : 0 }}
-              transition={{
-                // mirror BrandReveal's crossfade on home; off-home the small
-                // logo should appear immediately (no animation handoff needed).
-                delay:    brandVisible && isHome ? TRAVEL_DURATION - 0.22 : 0,
-                duration: 0.22,
-              }}
+              transition={{ duration: 0.3 }}
             >
-              gh<BlinkingOo subtle />mo w<RotatingGlobe subtle />rld
+              <Image
+                src="/images/brand/logo-gold-icon.png"
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 object-contain"
+              />
+              <span
+                className="font-script text-white whitespace-nowrap"
+                style={{ fontSize: "1.05rem", letterSpacing: "-0.01em" }}
+              >
+                Bidesh and Beyond
+              </span>
             </motion.span>
           </Link>
 

@@ -1,164 +1,122 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import TalkToUsModal from "@/components/home/TalkToUsModal";
+import PlanTripModal from "@/components/home/PlanTripModal";
 import Ticker from "@/components/shared/Ticker";
-import { fetchTrips, type TripFilters } from "@/lib/api/trips";
 import type { Trip } from "@/types/trip";
 
 const BRAND_GOLD = "#e8b84b";
-
-const TRAVELLER_OPTIONS = [
-  { value: "all",    label: "All"    },
-  { value: "solo",   label: "Solo"   },
-  { value: "couple", label: "Couple" },
-  { value: "group",  label: "Group"  },
-  { value: "family", label: "Family" },
-] as const;
-type TravellerFilter = (typeof TRAVELLER_OPTIONS)[number]["value"];
-
-const BUDGET_OPTIONS = [
-  { value: "all",     label: "All",         range: undefined },
-  { value: "under60", label: "Under ₹60k",  range: "budget"  },
-  { value: "60to85",  label: "₹60k–₹85k",   range: "mid"     },
-  { value: "over85",  label: "₹85k+",       range: "premium" },
-] as const;
-type BudgetFilter = (typeof BUDGET_OPTIONS)[number]["value"];
-
-const MONTHS_ORDERED = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
 
 interface Props {
   initialTrips: Trip[];
   initialTotal: number;
 }
 
+function matchesQuery(trip: Trip, query: string): boolean {
+  const haystack = [trip.name, trip.destination, ...trip.attractions]
+    .join(" ")
+    .toLowerCase();
+  return haystack.includes(query.toLowerCase());
+}
+
 export default function TripsBrowser({ initialTrips, initialTotal }: Props) {
-  const [trips, setTrips] = useState<Trip[]>(initialTrips);
-  const [total, setTotal] = useState<number>(initialTotal);
-  const [loading, setLoading] = useState(false);
-
-  const [bestFor, setBestFor] = useState<TravellerFilter>("all");
-  const [budget, setBudget] = useState<BudgetFilter>("all");
-  const [month, setMonth] = useState<string>("all");
-
   const [modalTrip, setModalTrip] = useState<Trip | null>(null);
+  const [planModalOpen, setPlanModalOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
-  // Month pills derived from the initial (unfiltered) set so the bar
-  // doesn't shrink as the user narrows results.
-  const monthOptions = useMemo(() => {
-    const set = new Set<string>();
-    initialTrips.forEach((t) => t.month?.forEach((m) => set.add(m)));
-    const list = Array.from(set).sort(
-      (a, b) => MONTHS_ORDERED.indexOf(a) - MONTHS_ORDERED.indexOf(b)
-    );
-    return [
-      { value: "all", label: "All" },
-      ...list.map((m) => ({ value: m, label: m })),
-    ];
-  }, [initialTrips]);
-
-  const isClean = bestFor === "all" && budget === "all" && month === "all";
-
-  useEffect(() => {
-    if (isClean) {
-      setTrips(initialTrips);
-      setTotal(initialTotal);
-      return;
-    }
-    const filters: TripFilters = {};
-    if (bestFor !== "all") filters.bestFor = bestFor;
-    const budgetOpt = BUDGET_OPTIONS.find((o) => o.value === budget);
-    if (budgetOpt?.range) filters.budgetRange = budgetOpt.range;
-    if (month !== "all") filters.month = month;
-
-    let cancelled = false;
-    setLoading(true);
-    fetchTrips({ filters })
-      .then((res) => {
-        if (cancelled) return;
-        setTrips(res.trips);
-        setTotal(res.total);
-      })
-      .catch((err) => {
-        if (cancelled) return;
-        console.error("[trips] filter fetch failed", err);
-        setTrips([]);
-        setTotal(0);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [bestFor, budget, month, isClean, initialTrips, initialTotal]);
-
-  const clearFilters = () => {
-    setBestFor("all");
-    setBudget("all");
-    setMonth("all");
-  };
+  const trimmedQuery = query.trim();
+  const filteredTrips = useMemo(() => {
+    if (!trimmedQuery) return initialTrips;
+    return initialTrips.filter((trip) => matchesQuery(trip, trimmedQuery));
+  }, [initialTrips, trimmedQuery]);
 
   return (
     <div className="pt-20 sm:pt-24 pb-16">
       {/* Page header */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 mb-8 sm:mb-12">
-        <p
-          className="text-xs font-bold tracking-[0.25em] uppercase mb-3"
-          style={{ color: BRAND_GOLD }}
-        >
-          All Trips
-        </p>
+        <div className="flex items-center justify-between mb-3">
+          <p
+            className="text-xs font-bold tracking-[0.25em] uppercase"
+            style={{ color: BRAND_GOLD }}
+          >
+            All Trips
+          </p>
+          <Link
+            href="/trips/calendar"
+            className="text-xs font-bold uppercase tracking-wide text-white/50 hover:text-white transition-colors"
+          >
+            Calendar view →
+          </Link>
+        </div>
         <h1 className="font-script font-bold text-white text-4xl sm:text-6xl leading-none mb-4">
           Find Your{" "}
           <span className="italic" style={{ color: BRAND_GOLD }}>
             Next Adventure
           </span>
         </h1>
-        <p className="text-white/40 text-sm sm:text-base">
-          {loading
-            ? "Searching…"
-            : `${total} ${total === 1 ? "trip" : "trips"} available`}
+        <p className="text-white/40 text-sm sm:text-base mb-6">
+          {initialTotal} {initialTotal === 1 ? "trip" : "trips"} available
         </p>
-      </section>
 
-      {/* Filter bar */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 mb-8 flex flex-col gap-4">
-        <FilterRow
-          label="Travelling As"
-          options={TRAVELLER_OPTIONS as readonly { value: string; label: string }[]}
-          value={bestFor}
-          onChange={(v) => setBestFor(v as TravellerFilter)}
-        />
-        <FilterRow
-          label="Budget"
-          options={BUDGET_OPTIONS as readonly { value: string; label: string }[]}
-          value={budget}
-          onChange={(v) => setBudget(v as BudgetFilter)}
-        />
-        <FilterRow
-          label="Month"
-          options={monthOptions}
-          value={month}
-          onChange={setMonth}
-        />
+        {/* Search bar */}
+        <div className="relative max-w-md">
+          <MagnifyingGlass
+            size={18}
+            weight="bold"
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30"
+          />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search a destination — Bali, Kenya, Egypt…"
+            className="w-full text-sm text-white/90 rounded-xl pl-11 pr-10 py-3 outline-none transition-all"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              caretColor: BRAND_GOLD,
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = `${BRAND_GOLD}55`;
+              e.currentTarget.style.boxShadow = `0 0 0 3px ${BRAND_GOLD}15`;
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+              e.currentTarget.style.boxShadow = "none";
+            }}
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors"
+            >
+              <X size={16} weight="bold" />
+            </button>
+          )}
+        </div>
       </section>
 
       {/* Body */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6">
-        {loading ? (
-          <SkeletonGrid />
-        ) : trips.length === 0 ? (
-          <EmptyState onClear={clearFilters} />
+        {filteredTrips.length === 0 ? (
+          trimmedQuery ? (
+            <SearchEmptyState
+              query={trimmedQuery}
+              onCustomise={() => setPlanModalOpen(true)}
+            />
+          ) : (
+            <EmptyState />
+          )
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {trips.map((trip) => (
+            {filteredTrips.map((trip) => (
               <TripCard
                 key={trip.id}
                 trip={trip}
@@ -176,50 +134,13 @@ export default function TripsBrowser({ initialTrips, initialTotal }: Props) {
           onClose={() => setModalTrip(null)}
         />
       )}
-    </div>
-  );
-}
 
-/* ─────────────────────────── Filter row ─────────────────────────── */
-
-function FilterRow({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: readonly { value: string; label: string }[];
-  value: string;
-  onChange: (v: string) => void;
-}) {
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-      <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/40 shrink-0 sm:w-36">
-        {label}
-      </span>
-      <div className="flex flex-wrap gap-2">
-        {options.map((opt) => {
-          const selected = value === opt.value;
-          return (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => onChange(opt.value)}
-              className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
-              style={{
-                background: selected ? BRAND_GOLD : "rgba(255,255,255,0.04)",
-                color: selected ? "#000" : "rgba(255,255,255,0.7)",
-                border: selected
-                  ? `1px solid ${BRAND_GOLD}`
-                  : "1px solid rgba(255,255,255,0.1)",
-              }}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
-      </div>
+      {planModalOpen && (
+        <PlanTripModal
+          initialQuery={trimmedQuery}
+          onClose={() => setPlanModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
@@ -390,57 +311,42 @@ function TripCard({ trip, onTalk }: { trip: Trip; onTalk: () => void }) {
   );
 }
 
-/* ─────────────────────────── Empty / loading ─────────────────────────── */
+/* ─────────────────────────── Empty states ─────────────────────────── */
 
-function EmptyState({ onClear }: { onClear: () => void }) {
+function EmptyState() {
   return (
     <div className="flex flex-col items-center text-center py-16 sm:py-24 gap-4">
       <div className="text-5xl">✈️</div>
-      <h3 className="text-white font-bold text-xl">
-        No trips found for this filter
-      </h3>
-      <p className="text-white/40 text-sm">Try a different combination</p>
-      <button
-        type="button"
-        onClick={onClear}
-        className="mt-4 px-6 py-3 rounded-xl font-bold text-xs tracking-[0.1em] uppercase transition-all duration-200 hover:brightness-110"
-        style={{ background: BRAND_GOLD, color: "#000" }}
-      >
-        Clear filters
-      </button>
+      <h3 className="text-white font-bold text-xl">No trips available right now</h3>
+      <p className="text-white/40 text-sm">Check back soon — new trips are added regularly</p>
     </div>
   );
 }
 
-function SkeletonGrid() {
+function SearchEmptyState({
+  query,
+  onCustomise,
+}: {
+  query: string;
+  onCustomise: () => void;
+}) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-2xl overflow-hidden"
-          style={{
-            background: "#121212",
-            border: "1px solid rgba(255,255,255,0.05)",
-          }}
-        >
-          <div className="h-[240px] bg-white/[0.03] animate-pulse" />
-          <div className="px-5 py-5 flex flex-col gap-3">
-            <div className="h-3 w-24 bg-white/[0.04] rounded animate-pulse" />
-            <div className="h-8 w-2/3 bg-white/[0.04] rounded animate-pulse" />
-            <div className="flex gap-2">
-              <div className="h-6 w-24 bg-white/[0.03] rounded-full animate-pulse" />
-              <div className="h-6 w-16 bg-white/[0.03] rounded-full animate-pulse" />
-            </div>
-            <div className="h-8 bg-white/[0.03] rounded animate-pulse" />
-            <div className="h-10 w-32 bg-white/[0.03] rounded animate-pulse" />
-            <div className="flex gap-3">
-              <div className="h-10 flex-1 bg-white/[0.03] rounded-xl animate-pulse" />
-              <div className="h-10 flex-1 bg-white/[0.03] rounded-xl animate-pulse" />
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="flex flex-col items-center text-center py-16 sm:py-24 gap-4">
+      <div className="text-5xl">🗺️</div>
+      <h3 className="text-white font-bold text-xl">
+        We don&rsquo;t have &ldquo;{query}&rdquo; listed yet
+      </h3>
+      <p className="text-white/40 text-sm max-w-xs">
+        We can still put together a custom trip there — just tell us a bit more.
+      </p>
+      <button
+        type="button"
+        onClick={onCustomise}
+        className="mt-2 px-6 py-3 rounded-xl font-bold text-xs tracking-[0.1em] uppercase transition-all duration-200 hover:brightness-110"
+        style={{ background: BRAND_GOLD, color: "#000" }}
+      >
+        Request a Custom Trip
+      </button>
     </div>
   );
 }

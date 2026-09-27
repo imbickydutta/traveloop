@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Thailand Vibes — ghoomo world";
+export const alt = "Thailand Vibes — Bidesh and Beyond";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -48,7 +48,7 @@ export default function Image() {
         <div style={{ position: "absolute", top: 48, right: 60, display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 8, height: 8, borderRadius: "50%", background: ACCENT }} />
           <span style={{ fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: "0.06em" }}>
-            ghoomo world
+            Bidesh and Beyond
           </span>
         </div>
 

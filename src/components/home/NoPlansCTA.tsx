@@ -83,7 +83,7 @@ export default function NoPlansCTA() {
             {/* Brand — always visible on left */}
             <div>
               <p className="font-script font-bold text-white text-sm sm:text-lg tracking-wide leading-none">
-                ghoomo world
+                Bidesh and Beyond
               </p>
               <p className="text-[9px] sm:text-[10px] font-bold tracking-[0.2em] uppercase text-white/35 mt-0.5">
                 Custom Escape
@@ -95,7 +95,7 @@ export default function NoPlansCTA() {
               <div /> {/* spacer */}
               <div className="text-right">
                 <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/35">Boarding Pass</p>
-                <p className="text-sm font-bold text-white/55 font-mono">#GW-000001</p>
+                <p className="text-sm font-bold text-white/55 font-mono">#BB-000001</p>
               </div>
             </div>
 
@@ -164,7 +164,7 @@ export default function NoPlansCTA() {
               <p className="text-[8px] font-bold tracking-[0.18em] uppercase text-white/35">
                 Boarding Pass
               </p>
-              <p className="text-[10px] font-bold text-white/55 font-mono mt-0.5">#GW-000001</p>
+              <p className="text-[10px] font-bold text-white/55 font-mono mt-0.5">#BB-000001</p>
             </div>
 
             {/* Icon */}

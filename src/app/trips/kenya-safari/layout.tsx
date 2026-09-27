@@ -5,15 +5,15 @@ export const metadata: Metadata = {
   description:
     "Big Five, Maasai Mara & Amboseli — 9 days through the wild heart of Africa. Join our group safari from ₹65,000 per person.",
   openGraph: {
-    title: "Kenya Safari — ghoomo world",
+    title: "Kenya Safari — Bidesh and Beyond",
     description:
       "9 days through Kenya's wild heart: Maasai Mara, Amboseli & Lake Nakuru. Group safari from ₹65,000.",
     type: "website",
-    siteName: "ghoomo world",
+    siteName: "Bidesh and Beyond",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kenya Safari — ghoomo world",
+    title: "Kenya Safari — Bidesh and Beyond",
     description: "9 days in Kenya: Big Five await. Group trip from ₹65,000.",
   },
 };

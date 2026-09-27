@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "Egypt Vibes — ghoomo world";
+export const alt = "Egypt Vibes — Bidesh and Beyond";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -59,7 +59,7 @@ export default function Image() {
             fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,0.5)",
             letterSpacing: "0.06em",
           }}>
-            ghoomo world
+            Bidesh and Beyond
           </span>
         </div>
 

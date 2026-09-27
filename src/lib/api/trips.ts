@@ -26,6 +26,8 @@ export interface BackendTrip {
   flag: string;
   duration: string;
   dates: string;
+  startDate: string;
+  endDate: string;
   month: string[];
   price: number;
   priceFinal: string;
@@ -89,6 +91,8 @@ export function mapBackendTripToFrontend(raw: BackendTrip): Trip {
     images: raw.images,
     videoUrl: raw.videoUrl,
     dateDisplay: raw.dates,
+    startDate: raw.startDate,
+    endDate: raw.endDate,
     durationShort: raw.duration,
     month: raw.month,
     pricePerPaxINR: raw.price,

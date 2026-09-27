@@ -18,26 +18,26 @@ const comfortaa = Comfortaa({
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_BASE_URL ?? "https://ghoomo.world"
+    process.env.NEXT_PUBLIC_BASE_URL ?? "https://bideshandbeyond.com"
   ),
   title: {
-    default: "ghoomo world — Group Travel, Full Vibe",
-    template: "%s | ghoomo world",
+    default: "Bidesh and Beyond — Group Travel, Full Vibe",
+    template: "%s | Bidesh and Beyond",
   },
   description:
     "Join epic group trips to Egypt, Kenya, Bali and more. Or get a curated plan built just for you. Trips set hai. Full vibe check.",
   keywords: ["group travel", "travel packages", "egypt trip", "kenya safari", "bali travel", "india travel group"],
   openGraph: {
-    title: "ghoomo world — Group Travel, Full Vibe",
+    title: "Bidesh and Beyond — Group Travel, Full Vibe",
     description:
       "Join epic group trips to Egypt, Kenya, Bali and more. Trips set hai. Full vibe check.",
     type: "website",
     locale: "en_IN",
-    siteName: "ghoomo world",
+    siteName: "Bidesh and Beyond",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ghoomo world — Group Travel, Full Vibe",
+    title: "Bidesh and Beyond — Group Travel, Full Vibe",
     description: "Join epic group trips. Trips set hai. Full vibe check.",
   },
   robots: {
